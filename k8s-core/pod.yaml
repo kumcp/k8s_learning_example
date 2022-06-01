@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "webpage"
+  namespace: default
+  labels:
+    app: "webpage"
+spec:
+  containers:
+  - name: webpage
+    image: "adminer"
+    resources:
+      limits:
+        cpu: 200m
+        memory: 500Mi
+      requests:
+        cpu: 100m
+        memory: 200Mi
+    env:
+    - name: db_host
+      valueFrom:
+        configMapKeyRef:
+          name: myapp
+          key: db_host
+    ports:
+    - containerPort:  8000
+      hostPort: 8001
+    volumeMounts:
+    - name: localtime
+      mountPath: /etc/localtime
+  volumes:
+    - name: localtime
+      hostPath:
+        path: /usr/share/zoneinfo/Asia/
+  restartPolicy: Always
