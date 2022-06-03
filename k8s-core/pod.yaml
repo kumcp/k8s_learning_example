@@ -33,3 +33,4 @@ spec:
       hostPath:
         path: /usr/share/zoneinfo/Asia/
   restartPolicy: Always
+  

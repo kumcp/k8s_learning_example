@@ -49,7 +49,7 @@ node.kubernetes.io/not-ready:NoSchedule
 
 ### 1.2.2 Node affinity
 
-### 1.3 Cordon a node
+## 1.3 Cordon a node
 
 Mark a node as unschedulable. The current pods can continue to host the pod, but cannot accept
 new pods
@@ -61,3 +61,18 @@ You can untaint it by:
 ```
 
 ```
+
+## 2. Common Script
+
+### 2.1 Check current configuration
+
+This is the script to check the current pod
+
+```
+kubectl run <pod-name> --image=<image-name> --dry-run=client -o yaml
+```
+
+`--dry-run=client`: This script will not create the real pod
+`-o yaml`: Get the output yaml. There are several output: json|yaml|name|...
+
+Use `kubectl run --help` for more detail

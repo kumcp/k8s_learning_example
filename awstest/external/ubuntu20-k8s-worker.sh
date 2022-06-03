@@ -82,7 +82,8 @@ sudo systemctl restart containerd
 
 sudo chmod 666 /var/run/docker.sock
 
-sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
+# Worker node will install everything except creating cluster
+# sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
 
 mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
