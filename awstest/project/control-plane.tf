@@ -18,15 +18,21 @@ data "template_file" "control_plane_user_data" {
   # You can put some variable here to render
 }
 
+locals {
+  keypair_name                = var.keypair_name
+  instance_type               = var.instance_type
+  control_plane_instance_name = var.control_plane_instance_name
+}
+
 module "control_plane" {
   source           = "../module/ec2_bootstrap"
   bootstrap_script = data.template_file.control_plane_user_data.rendered
 
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
   security_group_ids = concat(module.public_ssh_http.public_sg_ids, module.k8s_cluster_sg.specific_sg_ids)
-  keypair_name       = "codestar-group"
-  instance_type      = "t2.small"
-  name               = "control-plane"
+  keypair_name       = local.keypair_name
+  instance_type      = local.instance_type
+  name               = local.control_plane_instance_name
 
 }
 
@@ -49,3 +55,9 @@ module "k8s_cluster_sg" {
   }]
 }
 
+
+resource "aws_ssm_parameter" "join_k8s_cluster_cmd" {
+  name  = "join_command"
+  type  = "String"
+  value = "NULL"
+}

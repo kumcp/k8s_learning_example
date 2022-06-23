@@ -21,6 +21,7 @@ There are many types of volumes can be managed in k8s
 -   downwardAPI
 -   emptyDir
 -   fc (fibre channel)
+-   hostPath
 -   Creating a GCE persistent disk
 -   GCE persistent disk
 -   iscsi

@@ -16,6 +16,8 @@ echo \
 
 sudo apt-get update
 
+echo "============INSTALL DOCKER AND CONTAINERD=============="
+
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
 
@@ -44,6 +46,7 @@ sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://pack
 
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
+echo "===========INSTALL KUBETLET & KUBEADM & KUBECTL ============="
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
@@ -63,7 +66,13 @@ sudo systemctl restart kubelet
 # NOTE: kubernet master node (control plane) must have at least 1,7GB RAM and 2 vCPU
 # at least t3.small will work
 
-sudo kubeadm init --v=5
+
+##### INSTALL AWSCLI for saving key into SSM Parameters
+sudo apt install unzip
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
 
 
 ##### EXPERIMENTING
@@ -88,6 +97,12 @@ mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+# Install weave
+echo "============Install weave net============"
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf
 
@@ -95,3 +110,8 @@ sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 # mkdir -p $HOME/.kube
 # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 # sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+##### UPLOAD JOIN COMMAND INTO SSM PARAMETER
+
+aws ssm put-parameter --name=join_command  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
