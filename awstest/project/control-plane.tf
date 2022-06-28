@@ -12,16 +12,19 @@ provider "aws" {
 }
 
 ## To use template_file, you will need to use template provider
-data "template_file" "control_plane_user_data" {
-  template = file("../external/ubuntu20-k8scluster-cri-dockerd.sh")
 
-  # You can put some variable here to render
-}
 
 locals {
   keypair_name                = var.keypair_name
   instance_type               = var.instance_type
   control_plane_instance_name = var.control_plane_instance_name
+  cp_engine                   = var.cri_engine
+}
+
+data "template_file" "control_plane_user_data" {
+  template = file("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh")
+
+  # You can put some variable here to render
 }
 
 module "control_plane" {

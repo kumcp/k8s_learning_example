@@ -52,3 +52,12 @@ spec:
     image: nginx
     imagePullPolicy: IfNotPresent
 ```
+
+```
+kubectl -n dev get pod
+kubectl -n dev run mypod --image=nginx
+kubectl -n dev delete pod mypod
+
+kubectl --all-namespaces get pod
+kubectl -A get pod
+```

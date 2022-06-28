@@ -13,3 +13,10 @@ variable "control_plane_instance_name" {
   type        = string
   description = "Control Plane instance name"
 }
+
+
+variable "cri_engine" {
+  type        = string
+  description = "CRI Engine for k8s cluster. Can be: containerd (default), docker, podman"
+  default     = "containerd"
+}

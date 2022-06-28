@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: dep1
+  name: dep1
+  namespace: dev1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dep1
+  strategy: {}
+  template:
+    (pod spec)
+status: {}

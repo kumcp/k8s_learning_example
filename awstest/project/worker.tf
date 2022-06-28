@@ -1,6 +1,11 @@
 ## To use template_file, you will need to use template provider
+
+locals {
+  worker_engine = var.cri_engine
+}
+
 data "template_file" "woker_user_data" {
-  template = file("../external/ubuntu20-k8s-worker.sh")
+  template = file("../external/${local.worker_engine}/ubuntu20-k8s-worker.sh")
 
   # You can put some variable here to render
 }

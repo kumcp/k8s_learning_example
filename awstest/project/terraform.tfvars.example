@@ -1,0 +1,4 @@
+keypair_name                = ""
+instance_type               = ""
+control_plane_instance_name = ""
+

@@ -8,6 +8,13 @@
 
 ## 2. Command
 
+```
+kubectl get ns
+kubectl create ns dev
+kubectl describe ns dev
+kubectl edit ns dev
+```
+
 -   Get list namespace:
 
 ```
