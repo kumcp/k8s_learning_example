@@ -165,8 +165,7 @@ spec:
 
 ## 5. Taint and tolerations
 
-**Taints** are a type of mark on a node, that you want to **avoid pods to be schedules on Nodes** with
-these taints.
+**Taints** are a type of mark on a node, that you want to **avoid pods to be schedules on Nodes** with these taints.
 
 **Tolerations** are a type of mark on a pod, that you want to **allow pods to schedule on Nodes with matching taints**.
 

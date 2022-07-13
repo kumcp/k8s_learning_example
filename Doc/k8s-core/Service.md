@@ -157,7 +157,7 @@ kube-proxy is responsible for implementing a form of virtual IP for Services (no
 +---------------------+         +--------------+
                                       / | \
                                      /  |  \
-        Pod 1   <------+   |   \
+        Pod 1   <-------------------+   |   \
     label: key=value     Pod 2 <--------+    +-----> Pod 3
     port: X             label: key=value            label: key=value
                         port: X                     port: X
@@ -170,4 +170,78 @@ There are 4 types of Service:
 
 ### 3.1 ClusterIP
 
-### 3.2
+ClusterIP is a type of Service, which is only visible by Services inside cluster
+
+When you create a ClusterIP, other service can connect to service/pod. (Connected nodes need to open port 10250). Host environment cannot access service by clusterIP.
+
+```
+kubectl exec -it nginx -- /bin/bash
+
+root@nginx:/# curl <clusterIP>
+```
+
+In some specific cases, ClusterIP can be access through kubernetes proxy.
+
+```
+kubectl proxy --port=8080
+```
+
+Then, access through this:
+
+```
+http://localhost:8080/api/v1/proxy/namespaces/<NAMESPACE>/services/<SERVICE-NAME>:<PORT-NAME>/
+```
+
+### 3.2 NodePort
+
+NodePort is a type of Service which is visible to outside cluster
+
+Other service outside of cluster can access via: `<NodeIP>:<NodePort>
+
+All Nodes in the cluster can access service via NodePort.
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  type: NodePort
+  selector:
+    app: MyApp
+  ports:
+      # By default and for convenience, the `targetPort` is set to the same value as the `port` field.
+    - port: 80
+      targetPort: 80
+      # Optional field
+      # By default and for convenience, the Kubernetes control plane will allocate a port from a range (default: 30000-32767)
+      nodePort: 30007
+```
+
+### 3.3 LoadBalance
+
+-   LoadBalancer is a type of Service which created follow the published cloud in Service
+-   When LoadBalancer was confirmed, it provisions a actual Load Balancer
+-   Traffic from external LB is directed at the Pods. The Cloud provider decides how it is load balance
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+spec:
+  selector:
+    app: MyApp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+  clusterIP: 10.0.171.239
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 192.0.2.127
+```

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  ...
+spec:
+  selector:
+    matchLabels:
+      app: codestar
+  template:
+    metadata:
+      labels:
+        app: codestar
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - ...
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai

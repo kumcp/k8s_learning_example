@@ -1,0 +1,6 @@
+selector:
+  matchLabels:
+    component: x-component
+  matchExpressions:
+    - {key: tier, operator: In, values: [value1, value2]}
+    - {key: environment, operator: NotIn, values: [env1, env2]}

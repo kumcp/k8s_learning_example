@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: codestar-app
+  labels:
+    app: codestar-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: codestar-app
+  template:
+    metadata:
+      labels:
+        app: codestar-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx

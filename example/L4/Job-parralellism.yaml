@@ -1,0 +1,10 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: myjob
+spec:
+  parallelism: 1
+  completions: 5
+  template:
+    spec:
+      ...
