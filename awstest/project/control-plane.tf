@@ -32,11 +32,10 @@ module "control_plane" {
   bootstrap_script = data.template_file.control_plane_user_data.rendered
 
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
-  security_group_ids = concat(module.public_ssh_http.public_sg_ids, module.k8s_cluster_sg.specific_sg_ids)
+  security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id]
   keypair_name       = local.keypair_name
   instance_type      = local.instance_type
   name               = local.control_plane_instance_name
-
 }
 
 module "public_ssh_http" {
@@ -54,6 +53,14 @@ module "k8s_cluster_sg" {
     }, {
     from_port   = "2379"
     to_port     = "2380"
+    cidr_blocks = ["172.31.0.0/16"]
+    }, {
+    from_port   = "10250"
+    to_port     = "10259"
+    cidr_blocks = ["172.31.0.0/16"]
+    }, {
+    from_port   = "30000"
+    to_port     = "32767"
     cidr_blocks = ["172.31.0.0/16"]
   }]
 }

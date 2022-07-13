@@ -15,7 +15,7 @@ module "worker" {
   bootstrap_script = data.template_file.woker_user_data.rendered
 
   # security_group_ids = setunion(module.common_sg.public_sg_ids, module.common_sg.specific_sg_ids)
-  security_group_ids = concat(module.public_ssh_http.public_sg_ids, module.k8s_cluster_sg.specific_sg_ids)
+  security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id]
   keypair_name       = "codestar-group"
   instance_type      = "t2.small"
   name               = "worker"

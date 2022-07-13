@@ -6,3 +6,8 @@ output "control_plane_ip" {
 output "worker_node_ip" {
   value = module.worker.instance.public_ip
 }
+
+
+output "common_sg" {
+  value = module.k8s_cluster_sg
+}
