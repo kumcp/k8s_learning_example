@@ -46,3 +46,8 @@ variable "tags" {
 variable "keypair_name" {
   type = string
 }
+
+variable "number_of_instances" {
+  type    = number
+  default = 1
+}

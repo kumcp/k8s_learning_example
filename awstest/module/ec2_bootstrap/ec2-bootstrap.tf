@@ -10,9 +10,10 @@ data "aws_subnets" "default_subnets" {
 }
 
 locals {
-  ami              = var.ami
-  instance_type    = var.instance_type
-  bootstrap_script = try(var.bootstrap_script, file(var.bootstrap_script_file))
+  number_of_instances = var.number_of_instances
+  ami                 = var.ami
+  instance_type       = var.instance_type
+  bootstrap_script    = try(var.bootstrap_script, file(var.bootstrap_script_file))
 
   security_group_ids = var.security_group_ids
 
@@ -27,25 +28,27 @@ locals {
 }
 
 resource "aws_network_interface" "instance_eni" {
+  count     = local.number_of_instances
   subnet_id = local.subnet_id
 
   security_groups = local.security_group_ids
 
   tags = merge(local.common_tags,
     tomap({
-      Name = "primary_network_interface"
+      Name = "primary_network_interface${count.index}"
   }))
 }
 
 resource "aws_instance" "this" {
+  count = local.number_of_instances
 
   ami           = local.ami
   instance_type = local.instance_type
   key_name      = local.keypair_name
 
-  iam_instance_profile = aws_iam_instance_profile.profile.name
+  iam_instance_profile = aws_iam_instance_profile.profile[count.index].name
   network_interface {
-    network_interface_id = aws_network_interface.instance_eni.id
+    network_interface_id = aws_network_interface.instance_eni[count.index].id
     device_index         = 0
   }
 
@@ -110,6 +113,8 @@ resource "aws_iam_role" "control_plane_role" {
 
 
 resource "aws_iam_instance_profile" "profile" {
-  name = "profile_${local.common_tags.Name}"
+  count = local.number_of_instances
+
+  name = "profile_${local.common_tags.Name}_${count.index}"
   role = aws_iam_role.control_plane_role.name
 }
