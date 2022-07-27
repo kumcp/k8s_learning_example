@@ -97,12 +97,23 @@ sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Install weave
-echo "============Install weave net============"
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
-
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+# Install weave (is having a problem with 1 master, 2 workers)
+echo "============Install weave net============"
+# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
+
+
+# Install calico CNI
+# echo "============Install Calico CNI ============"
+# kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
+# curl https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml -O
+# kubectl create -f custom-resources.yaml
+# curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
+# kubectl apply -f calico.yaml
+
 
 # Run as reegular usesr
 # mkdir -p $HOME/.kube

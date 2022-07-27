@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: nginx
+        app.kubernetes.io/name: proxy
     spec:
       containers:
       - name: nginx
@@ -20,3 +21,4 @@ spec:
         resources:
         ports:
         - containerPort: 80
+          name: http-web-svc

@@ -91,7 +91,7 @@ sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Run as reegular usesr
+# Run as regular usesr
 # mkdir -p $HOME/.kube
 # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 # sudo chown $(id -u):$(id -g) $HOME/.kube/config

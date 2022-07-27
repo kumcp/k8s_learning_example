@@ -178,6 +178,7 @@ When you create a ClusterIP, other service can connect to service/pod. (Connecte
 kubectl exec -it nginx -- /bin/bash
 
 root@nginx:/# curl <clusterIP>
+root@nginx:/# curl
 ```
 
 In some specific cases, ClusterIP can be access through kubernetes proxy.
