@@ -16,8 +16,6 @@ echo \
 
 sudo apt-get update
 
-echo "============INSTALL DOCKER AND CONTAINERD=============="
-
 sudo apt-get install containerd.io -y
 
 
@@ -30,13 +28,13 @@ sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://pack
 
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
-echo "===========INSTALL KUBETLET & KUBEADM & KUBECTL ============="
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
 
 
 # This if for fixing error cgroup
+
 
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
@@ -47,13 +45,7 @@ sudo systemctl restart kubelet
 # NOTE: kubernet master node (control plane) must have at least 1,7GB RAM and 2 vCPU
 # at least t3.small will work
 
-
-##### INSTALL AWSCLI for saving key into SSM Parameters
-sudo apt install unzip
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
+# sudo kubeadm init --v=5
 
 
 ##### EXPERIMENTING
@@ -77,7 +69,8 @@ sudo systemctl restart containerd
 
 sudo apt install gnupg2 software-properties-common apt-transport-https -y
 
-#### CONFIG KERNEL IF NOT USE DOCKER
+
+###### INSTALL NETWORK
 modprobe overlay
 modprobe br_netfilter
 echo """
@@ -88,38 +81,35 @@ net.ipv4.ip_forward = 1
 sudo sysctl --system
 
 
-
-sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
+# Worker node will install everything except creating cluster
+# sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
 
 mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 
-export KUBECONFIG=/etc/kubernetes/admin.conf
-
-# Install weave (is having a problem with 1 master, 2 workers)
-# echo "============Install weave net============"
-# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Install calico CNI
-# echo "============Install Calico CNI ============"
-# kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
-# curl https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml -O
-# kubectl create -f custom-resources.yaml
-# curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
-# kubectl apply -f calico.yaml
-# Run as root
-#  export KUBECONFIG=/etc/kubernetes/admin.conf
-
-# Run as reegular usesr
+# Run as regular usesr
 # mkdir -p $HOME/.kube
 # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 # sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+sudo apt install unzip
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 
-##### UPLOAD JOIN COMMAND INTO SSM PARAMETER
+while true
+do
+sleep 2s
+result=$(aws ssm get-parameter --name join_command --output text --query "Parameter.Value")
+echo $result
+if [[ "$result" == *"kubeadm"* ]]; then
+  echo "breaked"
+  break
+fi
+done
 
-aws ssm put-parameter --name=join_command  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
+sudo $(aws ssm get-parameter --name join_command --output text --query "Parameter.Value" | sed -e "s/\\\\//g")

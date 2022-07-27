@@ -97,12 +97,14 @@ sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Install weave (is having a problem with 1 master, 2 workers)
-# echo "============Install weave net============"
-# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
-kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+# Install weave (is having a problem with 1 master, 2 workers)
+echo "============Install weave net============"
+# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
+
 
 # Install calico CNI
 # echo "============Install Calico CNI ============"
@@ -111,8 +113,7 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
 # kubectl create -f custom-resources.yaml
 # curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
 # kubectl apply -f calico.yaml
-# Run as root
-#  export KUBECONFIG=/etc/kubernetes/admin.conf
+
 
 # Run as reegular usesr
 # mkdir -p $HOME/.kube
@@ -123,3 +124,8 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
 ##### UPLOAD JOIN COMMAND INTO SSM PARAMETER
 
 aws ssm put-parameter --name=join_command  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+

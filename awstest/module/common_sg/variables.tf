@@ -14,6 +14,7 @@ variable "rules" {
     port             = optional(string)
     from_port        = optional(string)
     to_port          = optional(string)
+    protocol         = optional(string)
     cidr_blocks      = optional(list(string))
     ipv6_cidr_blocks = optional(list(string))
     description      = optional(string)
