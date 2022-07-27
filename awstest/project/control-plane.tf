@@ -16,7 +16,7 @@ provider "aws" {
 
 locals {
   keypair_name                = var.keypair_name
-  instance_type               = var.instance_type
+  instance_type_master        = var.instance_type_master
   control_plane_instance_name = var.control_plane_instance_name
   cp_engine                   = var.cri_engine
 }
@@ -32,9 +32,9 @@ module "control_plane" {
   bootstrap_script = data.template_file.control_plane_user_data.rendered
 
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
-  security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id]
+  security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id, module.k8s_cluster_worker_sg.specific_sg_id]
   keypair_name       = local.keypair_name
-  instance_type      = local.instance_type
+  instance_type      = local.instance_type_master
   name               = local.control_plane_instance_name
 }
 
@@ -61,6 +61,27 @@ module "k8s_cluster_sg" {
     }, {
     from_port   = "30000"
     to_port     = "32767"
+    cidr_blocks = ["172.31.0.0/16"]
+    }, {
+    from_port   = "6783"
+    to_port     = "6783"
+    protocol    = "tcp"
+    cidr_blocks = ["172.31.0.0/16"]
+    }, {
+    from_port   = "6783"
+    to_port     = "6784"
+    protocol    = "udp"
+    cidr_blocks = ["172.31.0.0/16"]
+  }, ]
+}
+
+module "k8s_cluster_worker_sg" {
+  source      = "../module/common_sg"
+  name_suffix = "k8s_cluster_inside"
+  rules = [{
+    from_port   = "0"
+    to_port     = "63000"
+    protocol    = "-1"
     cidr_blocks = ["172.31.0.0/16"]
   }]
 }

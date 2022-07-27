@@ -63,7 +63,7 @@ resource "aws_security_group" "allow_public" {
 # Loop through security group rules and add to security group
 resource "aws_security_group_rule" "rules" {
   # This is a trick to convert list to map
-  for_each = { for rule in local.rules : (rule.port != null ? rule.port : rule.from_port) => rule }
+  for_each = { for rule in local.rules : (rule.port != null ? rule.port : "${rule.from_port}_${rule.to_port}") => rule }
 
   type              = "ingress"
   description       = "Specific access inbound for port ${each.value.port != null ? each.value.port : each.value.from_port}"
