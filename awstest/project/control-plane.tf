@@ -20,16 +20,22 @@ locals {
   control_plane_instance_name = var.control_plane_instance_name
   cp_engine                   = var.cri_engine
 }
+// Usage of template has been deprecated.
+# data "template_file" "control_plane_user_data" {
+#   template = file("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh")
 
-data "template_file" "control_plane_user_data" {
-  template = file("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh")
-
-  # You can put some variable here to render
-}
+# You can put some variable here to render
+# }
 
 module "control_plane" {
-  source           = "../module/ec2_bootstrap"
-  bootstrap_script = data.template_file.control_plane_user_data.rendered
+  source = "../module/ec2_bootstrap"
+
+  // Usage of template has been deprecated.
+  # bootstrap_script = data.template_file.control_plane_user_data.rendered
+
+
+  bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
+
 
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
   security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id, module.k8s_cluster_worker_sg.specific_sg_id]

@@ -1,4 +1,6 @@
-keypair_name                = ""
-instance_type               = ""
-control_plane_instance_name = ""
-
+keypair_name                =
+instance_type_master        = 
+instance_type               = 
+control_plane_instance_name = 
+cri_engine                  = 
+number_of_workers           = 
