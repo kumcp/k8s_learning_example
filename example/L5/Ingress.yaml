@@ -10,10 +10,17 @@ spec:
   - host: "foo.bar.com"
     http:
       paths:
-      - path: /testpath
+      - path: /path1
         pathType: Prefix
         backend:
           service:
-            name: test
+            name: codestar-svc-adminer
+            port:
+              number: 80
+      - path: /path2
+        pathType: Prefix
+        backend:
+          service:
+            name: codestar-nodeport-svc
             port:
               number: 80
