@@ -17,7 +17,7 @@ locals {
 module "workers" {
   source = "../module/ec2_bootstrap"
   # bootstrap_script = data.template_file.woker_user_data.rendered
-  bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
+  bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-worker.sh", {})
 
 
   # security_group_ids = setunion(module.common_sg.public_sg_ids, module.common_sg.specific_sg_ids)
