@@ -189,6 +189,12 @@ node-role.kubernetes.io/master:NoSchedule
 node.kubernetes.io/not-ready:NoSchedule
 ```
 
+-   There are several type of Taints:
+
+*   `NoSchedule`: Pod without Tolerations will not be scheduled on this Node
+*   `PreferNoSchedule`: Pod without Tolerations will try to avoid being scheduled on this Node
+*   `NoExecute`: Pod without Tolerations will be evicted immediately and not be scheduled on this Node
+
 -   Use tolerances in a Pod spec to except that pod from taint
 
 ```
