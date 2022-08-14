@@ -99,3 +99,25 @@ kubectl replace serviceaccount default -f ./sa.yaml
 kubectl run nginx --image=nginx --restart=Never
 kubectl get pod nginx -o=jsonpath='{.spec.imagePullSecrets[0].name}{"\n"}'
 ```
+
+## 4. CA cert
+
+Kubernetes cluster when created, will create a self cert for the cluster. This behavior can change depends on which tool you used for creating cluster.
+
+`kubeadm init` will create certification at: `/etc/kubernetes/pki/ca.crt`. This cert will expire after 1 year. If you use External CA cert, then kubeadm will do nothing.
+
+API to the k8s cluster is based on CoreDNS as default.
+The API can be found by: `kubectl cluster-info`
+
+You can make the API call to cluster by:
+
+`curl --cacert ca.crt https://172.31.26.112:6443/api/v1/namespaces/testns/pods/nginx2`
+
+If you want to make API call using the secret mounted into the Pod, then use:
+
+```
+export TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+curl -ks  --header "Authorization: Bearer $TOKEN" https://172.31.26.112:6443/api/v1/namespaces/tesns/pods/nginx2/log
+
+curl --cacert ca.crt --header "Authorization: Bearer $TOKEN" https://172.31.26.112:6443/api/v1/namspaces/testns/pods/nginx2
+```

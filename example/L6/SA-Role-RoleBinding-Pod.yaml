@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: nginx1-sa-token
+  namespace: testns
+  annotations:
+    kubernetes.io/service-account.name: "nginx1-sa"
+type: kubernetes.io/service-account-token
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    kubernetes.io/enforce-mountable-secrets: "true"
+  name: nginx1-sa
+  namespace: testns
+automountServiceAccountToken: true
+secrets:
+- name: nginx1-sa-token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx1
+  labels:
+    env: test
+  namespace: testns   # specific namespace
+spec:
+  serviceAccountName: nginx1-sa     # Declare the SA name here
+  automountServiceAccountToken: true
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: "0.3"
+      requests:
+        memory: 256Mi
+        cpu: "0.2"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx2
+  labels:
+    env: test
+  namespace: testns   # specific namespace
+spec:
+  containers:
+  - name: nginx2
+    image: nginx
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: "0.3"
+      requests:
+        memory: 256Mi
+        cpu: "0.2"
+--- 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: testns
+  name: nginx2-reader
+rules:
+- apiGroups: [""] # See here for more: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/
+  resources: ["pods", "pods/log"]
+  resourceNames: ["nginx2"]
+  verbs: ["get", "list"]      # Define What this role can do
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: nginx2-reader-binding
+  namespace: testns
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nginx2-reader
+subjects:
+- kind: ServiceAccount
+  name: nginx1-sa
+  namespace: testns
