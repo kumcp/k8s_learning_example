@@ -19,16 +19,16 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: nginx # has to match .spec.template.metadata.labels
+      app: nginx
   serviceName: "nginx"
   replicas: 3 # by default is 1
-  minReadySeconds: 10 # by default is 0
+  # minReadySeconds: 10 # by default is 0
   template:
     metadata:
       labels:
-        app: nginx # has to match .spec.selector.matchLabels
+        app: nginx
     spec:
-      terminationGracePeriodSeconds: 10
+      # terminationGracePeriodSeconds: 10
       containers:
       - name: nginx
         image: k8s.gcr.io/nginx-slim:0.8
@@ -36,14 +36,14 @@ spec:
         - containerPort: 80
           name: web
         volumeMounts:
-        - name: www
+        - name: task-pvc
           mountPath: /usr/share/nginx/html
   volumeClaimTemplates:
   - metadata:
-      name: www
+      name: task-pvc
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "my-storage-class"
+      storageClassName: "manual"
       resources:
         requests:
-          storage: 1Gi
+          storage: 500Mi

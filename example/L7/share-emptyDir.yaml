@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: codestar-pod
+spec:
+  containers:
+  - image: alpine
+    imagePullPolicy: IfNotPresent
+    name: codestar-ctn-emptydir
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: "0.4"
+      requests:
+        memory: 256Mi
+        cpu: "0.2"
+    command: [    'sh', '-c', 'echo a container is running ; sleep 3600']
+    volumeMounts:
+    - mountPath: /vol1
+      name: temp-vol
+    - mountPath: /vol2
+      name: temp-vol-ram
+  - image: alpine
+    imagePullPolicy: IfNotPresent
+    name: codestar-ctn-emptydir2
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: "0.4"
+      requests:
+        memory: 256Mi
+        cpu: "0.2"
+    command: [    'sh', '-c', 'echo another container is running ; sleep 3600']
+    volumeMounts:
+    - mountPath: /vol-disk
+      name: temp-vol
+    - mountPath: /vol-ram
+      name: temp-vol-ram
+  volumes:
+  - name: temp-vol
+    emptyDir: {}
+  - name: temp-vol-ram
+    emptyDir: 
+      medium: Memory
+      sizeLimit: 200M   # This is for limit the size will be used

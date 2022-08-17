@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: k-app-configmap
+data:
+    codestarAppVer: v1
+    lastUpdate: 2022-10-15
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k-app
+  labels:
+    app: k-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lab2
+  template:
+    metadata:
+      labels:
+        app: lab2
+    spec:
+      containers:
+        - name: lab2-cnt
+          image: "nginx"
+          resources:
+          ports:
+            - containerPort: 80
+          env:
+            - name: version
+              valuesFrom:
+                configMapKeyRef:
+                  name: k-app-configmap
+                  key: codestarAppVer
+            - name: updated_at
+              valueFrom:
+                configMapKeyRef:
+                  name: k-app-configmap
+                  key: lastUpdate

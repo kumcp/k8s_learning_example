@@ -1,0 +1,47 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  type: gp2
+allowedTopologies:
+- matchLabelExpressions:
+  - key: topology.ebs.csi.aws.com/zone
+    values:
+    - ap-southeast-1b
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ebs-sc
+  resources:
+    requests:
+      storage: 4Gi
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task-pv-ebs
+spec:
+  volumes:
+    - name: ebs-claim-vol
+      persistentVolumeClaim:
+        claimName: ebs-claim
+  containers:
+    - name: ebs-claim-vol
+      image: nginx
+      # command: [ "sh", "-c", "'\"test\" > /usr/share/nginx/html/index.html'"]
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: ebs-claim-vol
