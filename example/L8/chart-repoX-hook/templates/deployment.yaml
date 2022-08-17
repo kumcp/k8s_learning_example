@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.appName | default "lab2-deployment"}}
+  labels:
+    app: {{.Values.appName | default "lab2-app"}}
+spec:
+  replicas: {{.Values.replicas}}
+  selector:
+    matchLabels:
+      app: {{.Values.label | default "lab2"}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.label | default "lab2"}}
+    spec:
+      containers:
+        - name: {{.Values.ctnName | default "lab2-cnt"}}
+          image: {{quote .Values.imageName}}
+          resources:
+          ports:
+            - containerPort: 80
+          env:
+            - name: version
+              valueFrom:
+                configMapKeyRef:
+                  name: {{.Values.appName}}-configmap
+                  key: codestarAppVer
+            - name: updated_at
+              valueFrom:
+                configMapKeyRef:
+                  name: {{.Values.appName}}-configmap
+                  key: lastUpdate
