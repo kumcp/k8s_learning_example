@@ -24,7 +24,7 @@ spec:
             - containerPort: 80
           env:
             - name: version
-              valuesFrom:
+              valueFrom:
                 configMapKeyRef:
                   name: {{.Values.appName}}-configmap
                   key: codestarAppVer
