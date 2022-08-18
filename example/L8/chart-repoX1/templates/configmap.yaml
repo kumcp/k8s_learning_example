@@ -3,4 +3,6 @@ kind: ConfigMap
 metadata:
     name: {{.Values.appName}}-cfm
 data:
-    {{.Values.configMap}}
+    {{- range $key, $value := .Values.configMap}}
+    {{$key}}: {{$value}}
+    {{- end}}

@@ -24,10 +24,10 @@ spec:
             - containerPort: {{.Values.bePort | default 80}}
           {{ if (.Values.configMap) }}
           env:
-            {{- range $key, $value := .Values.configMap}}
+            {{- range $key, $value := .Values.configMap}}   # This is for/loop in key/value
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
-                  name: {{.Values.appName}}-cfm
+                  name: {{$.Values.appName}}-cfm  # $ is for get global variable
                   key: {{ $key }}
-          {{- end }}
+            {{- end }}
