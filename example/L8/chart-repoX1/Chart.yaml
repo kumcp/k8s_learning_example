@@ -1,5 +1,5 @@
 apiVersion: v2
-name: labX1
+name: labx1
 description: A demo Helm chart for Kubernetes
 
 type: application

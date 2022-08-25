@@ -51,3 +51,10 @@ variable "number_of_instances" {
   type    = number
   default = 1
 }
+
+
+variable "role" {
+  type = string
+  description = "Role name to be added into multiple ec2 instances"
+  default = null
+}

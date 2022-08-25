@@ -22,6 +22,8 @@ locals {
   # If subnet_id is not specific, then use first default subnet
   subnet_id = var.subnet_id == "" ? tolist(data.aws_subnets.default_subnets.ids)[0] : var.subnet_id
 
+  include_role = var.role != null 
+
   common_tags = merge(var.tags, {
     Name = var.name != "" ? var.name : "ec2-bootstrap-demo"
   })
@@ -46,75 +48,26 @@ resource "aws_instance" "this" {
   instance_type = local.instance_type
   key_name      = local.keypair_name
 
-  iam_instance_profile = aws_iam_instance_profile.profile[count.index].name
+  iam_instance_profile = local.include_role ? aws_iam_instance_profile.profile[count.index].name : null
   network_interface {
     network_interface_id = aws_network_interface.instance_eni[count.index].id
     device_index         = 0
   }
 
   user_data = local.bootstrap_script
-  tags      = local.common_tags
+  tags      = merge(local.common_tags,
+    tomap({
+      Name = "${local.common_tags.Name}_${count.index}"
+  }))
 }
 
 
-resource "aws_iam_role" "control_plane_role" {
 
-  name = "role_${local.common_tags.Name}"
-  # Terraform's "jsonencode" function converts a
-  # Terraform expression result to valid JSON syntax.
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
-    ]
-  })
-
-  /* This policy need attaching to  */
-  inline_policy {
-    name = "access_parameter_store"
-
-    policy = jsonencode({
-      "Version" : "2012-10-17",
-      "Statement" : [
-        {
-          "Sid" : "VisualEditor0",
-          "Effect" : "Allow",
-          "Action" : [
-            "ssm:PutParameter",
-            "ssm:LabelParameterVersion",
-            "ssm:DeleteParameter",
-            "ssm:UnlabelParameterVersion",
-            "ssm:DescribeParameters",
-            "ssm:RemoveTagsFromResource",
-            "ssm:GetParameterHistory",
-            "ssm:AddTagsToResource",
-            "ssm:GetParametersByPath",
-            "ssm:GetParameters",
-            "ssm:GetParameter",
-            "ssm:DeleteParameters"
-          ],
-          "Resource" : "*"
-        }
-      ]
-    })
-  }
-
-  tags = {
-    Name = "control-plane-role"
-  }
-}
 
 
 resource "aws_iam_instance_profile" "profile" {
-  count = local.number_of_instances
+  count = local.include_role ? local.number_of_instances : 0
 
   name = "profile_${local.common_tags.Name}_${count.index}"
-  role = aws_iam_role.control_plane_role.name
+  role = var.role
 }
