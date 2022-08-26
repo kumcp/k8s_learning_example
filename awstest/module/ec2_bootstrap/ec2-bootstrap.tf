@@ -57,7 +57,7 @@ resource "aws_instance" "this" {
   user_data = local.bootstrap_script
   tags      = merge(local.common_tags,
     tomap({
-      Name = "${local.common_tags.Name}_${count.index}"
+      Name = local.number_of_instances == 1 ? "${local.common_tags.Name}" : "${local.common_tags.Name}_${count.index}"
   }))
 }
 
