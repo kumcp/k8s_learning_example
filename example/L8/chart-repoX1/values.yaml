@@ -1,0 +1,9 @@
+appName: "k-app"
+lastUpdate: "2022-10-15"
+replica: 1
+imageName: nginx
+bePort: 80
+
+configMap:
+  key1: value1
+  key2: value2

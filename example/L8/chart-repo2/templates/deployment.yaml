@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{.Values.appName | default "lab2-deployment"}}
+  namespace: {{ .Release.Name }}-ns
   labels:
     app: {{.Values.appName | default "lab2-app"}}
 spec:
@@ -11,6 +12,7 @@ spec:
       app: {{.Values.label | default "lab2"}}
   template:
     metadata:
+      namespace: {{ .Release.Name }}-ns
       labels:
         app: {{.Values.label | default "lab2"}}
     spec:

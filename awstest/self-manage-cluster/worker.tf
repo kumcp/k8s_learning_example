@@ -26,5 +26,9 @@ module "workers" {
   instance_type       = local.worker_instance_type
   name                = local.worker_name
   number_of_instances = local.number_of_workers
+
+  // TODO: This will need to be more specific, but keep it simple for now
+  role = aws_iam_role.control_plane_role.name
 }
+
 

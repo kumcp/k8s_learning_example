@@ -1,0 +1,88 @@
+--
+# Source: labX1/templates/sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    kubernetes.io/enforce-mountable-secrets: "true"
+  name: k-app-sa
+  namespace: testns
+automountServiceAccountToken: true
+secrets:
+- name: k-app-sa-token
+---
+# Source: labX1/templates/sa.yaml
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: k-app-sa-token
+  namespace: testns
+  annotations:
+    kubernetes.io/service-account.name: "k-app-sa"
+type: kubernetes.io/service-account-token
+---
+# Source: labX1/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: k-app-cfm
+data:
+    key1: value1
+    key2: value2
+---
+# Source: labX1/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: k-app-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: k-app-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+# Source: labX1/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k-app-dpl
+  labels:
+    app: k-app-app
+    project: k-app
+    env: test
+    role: "backend"
+spec:
+  replicas: 
+  selector:
+    matchLabels:
+      app: k-app-pod
+  template:
+    metadata:
+      labels:
+        app: k-app-pod
+        project: k-app
+        env: test
+        role: "backend"
+    spec:
+      containers:
+        - name: lab2-cnt
+          image: "nginx"
+          resources:
+          ports:
+            - containerPort: 80
+          
+          env:
+            - name: key1
+              valueFrom:
+                configMapKeyRef:
+                  name: k-app-cfm
+                  key: key1
+            - name: key2
+              valueFrom:
+                configMapKeyRef:
+                  name: k-app-cfm
+                  key: key2

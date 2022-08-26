@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.appName}}-dpl
+  labels:
+    app: {{.Values.appName}}-app
+{{include "common.belabel" . | indent 4 }}
+spec:
+  replicas: {{.Values.replicas}}
+  selector:
+    matchLabels:
+      app: {{.Values.appName}}-pod
+  template:
+    metadata:
+      labels:
+        app: {{.Values.appName }}-pod
+{{include "common.belabel" . | indent 8 }}
+    spec:
+      containers:
+        - name: {{.Values.ctnName | default "lab2-cnt"}}
+          image: {{quote .Values.imageName}}
+          resources:
+          ports:
+            - containerPort: {{.Values.bePort | default 80}}
+          {{ if (.Values.configMap) }}
+          env:
+            {{- range $key, $value := .Values.configMap}}   # This is for/loop in key/value
+            - name: {{ $key }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{$.Values.appName}}-cfm  # $ is for get global variable
+                  key: {{ $key }}
+            {{- end }}

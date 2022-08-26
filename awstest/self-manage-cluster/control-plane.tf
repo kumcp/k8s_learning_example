@@ -36,7 +36,7 @@ module "control_plane" {
 
   bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
 
-
+  role = aws_iam_role.control_plane_role.name
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
   security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id, module.k8s_cluster_worker_sg.specific_sg_id]
   keypair_name       = local.keypair_name
@@ -46,6 +46,7 @@ module "control_plane" {
 
 module "public_ssh_http" {
   source       = "../module/common_sg"
+  name_suffix = "control_plane_sg"
   public_ports = ["80", "22"]
 }
 
@@ -90,6 +91,61 @@ module "k8s_cluster_worker_sg" {
     protocol    = "-1"
     cidr_blocks = ["172.31.0.0/16"]
   }]
+}
+
+
+resource "aws_iam_role" "control_plane_role" {
+
+  name = "role_${local.control_plane_instance_name}"
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression result to valid JSON syntax.
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
+
+  /* This policy need attaching to  */
+  inline_policy {
+    name = "access_parameter_store"
+
+    policy = jsonencode({
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Sid" : "VisualEditor0",
+          "Effect" : "Allow",
+          "Action" : [
+            "ssm:PutParameter",
+            "ssm:LabelParameterVersion",
+            "ssm:DeleteParameter",
+            "ssm:UnlabelParameterVersion",
+            "ssm:DescribeParameters",
+            "ssm:RemoveTagsFromResource",
+            "ssm:GetParameterHistory",
+            "ssm:AddTagsToResource",
+            "ssm:GetParametersByPath",
+            "ssm:GetParameters",
+            "ssm:GetParameter",
+            "ssm:DeleteParameters"
+          ],
+          "Resource" : "*"  // TODO: This will need to be more specific to secure, but just keep it simple for now
+        }
+      ]
+    })
+  }
+
+  tags = {
+    Name = "control-plane-role"
+  }
 }
 
 
