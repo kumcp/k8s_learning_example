@@ -4,3 +4,21 @@ variable "account_id" {
   default     = ""
 
 }
+
+variable "keypair_name" {
+  type        = string
+  description = "Input keypair name. You need to create key by yourself first"
+  default     = "codestar-group"
+}
+
+variable "instance_type" {
+  type        = string
+  description = "EC2 Instance type (Default: t2.micro)"
+  default     = "t2.micro"
+}
+
+variable "instance_name" {
+  type        = string
+  description = "Name instance by tag"
+  default     = "eksctl"
+}

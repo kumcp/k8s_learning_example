@@ -1,0 +1,25 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: mycluster
+  region: ap-southeast-1
+
+nodeGroups:
+  - name: ng-1
+    instanceType: t2.micro
+    desiredCapacity: 1
+    volumeSize: 8
+    ssh:
+      allow: true # will use ~/.ssh/id_rsa.pub as the default ssh key
+      
+managedNodeGroups:
+  - name: m-ng-2
+    ami: ami-041d9e0ee63520d26 # This is AMI for ap-southeast-1 only
+    instanceType: t3.micro
+    desiredCapacity: 1
+    volumeSize: 8
+    labels: {role: worker}
+    overrideBootstrapCommand: |
+      #!/bin/bash
+      /etc/eks/bootstrap.sh mycluster

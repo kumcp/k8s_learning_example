@@ -33,6 +33,8 @@ module "control_plane" {
   // Usage of template has been deprecated.
   # bootstrap_script = data.template_file.control_plane_user_data.rendered
 
+  // Viet ami vao day:
+  ami = "..."
 
   bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
 
@@ -46,7 +48,7 @@ module "control_plane" {
 
 module "public_ssh_http" {
   source       = "../module/common_sg"
-  name_suffix = "control_plane_sg"
+  name_suffix  = "control_plane_sg"
   public_ports = ["80", "22"]
 }
 
@@ -137,7 +139,7 @@ resource "aws_iam_role" "control_plane_role" {
             "ssm:GetParameter",
             "ssm:DeleteParameters"
           ],
-          "Resource" : "*"  // TODO: This will need to be more specific to secure, but just keep it simple for now
+          "Resource" : "*" // TODO: This will need to be more specific to secure, but just keep it simple for now
         }
       ]
     })

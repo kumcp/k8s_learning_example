@@ -13,9 +13,9 @@ provider "aws" {
 
 
 locals {
-  keypair_name  = "codestar-group"
-  instance_type = "t2.micro"
-  instance_name = "eksctl"
+  keypair_name  = var.keypair_name
+  instance_type = var.instance_type
+  instance_name = var.instance_name
 
   account_id = var.account_id
 }
