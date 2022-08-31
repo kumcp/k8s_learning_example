@@ -1,0 +1,21 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: mycluster
+  region: ap-southeast-1
+      
+fargateProfiles:
+  - name: fp-default
+    selectors:
+      # All workloads in the "default" & "kube-system" Kubernetes namespace will be
+      # scheduled onto Fargate:
+      - namespace: default
+      - namespace: kube-system
+  - name: fp-stag
+    selectors:
+      # All workloads in the "dev" Kubernetes namespace matching the following
+      # label selectors will be scheduled onto Fargate:
+      - namespace: stag
+        labels:
+          env: stag
