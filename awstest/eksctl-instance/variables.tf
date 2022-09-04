@@ -22,3 +22,10 @@ variable "instance_name" {
   description = "Name instance by tag"
   default     = "eksctl"
 }
+
+
+variable "auto_script" {
+  type        = string
+  description = "name of auto script will be used in creating eksctl. You can take a look in ../external/ folder"
+  default     = "eks"
+}
