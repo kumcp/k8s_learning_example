@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codestar-deployment
+  labels:
+    app: codestar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: codestar
+  template:
+    metadata:
+      labels:
+        app: codestar
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        resources:
+        ports:
+        - containerPort: 80
+          name: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: codestar-service
+  labels:
+    app: codestar
+spec:
+  selector:
+    app: codestar
+  ports:
+  - protocol: TCP
+    name: web
+    port: 80

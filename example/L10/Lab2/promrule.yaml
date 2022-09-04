@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: codestar-rule
+  labels:
+      release: prometheus-release
+spec:
+  groups:
+    - name: alertmanager.rules
+      rules:
+        - alert: CodestarMetricTooHigh
+          expr: codestar_http_requests_total >= 5
+          for: 1m
+          labels:
+            severity: critical

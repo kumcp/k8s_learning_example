@@ -23,7 +23,7 @@ locals {
 module "eksctl_instance" {
   source = "../module/ec2_bootstrap"
 
-  bootstrap_script = templatefile("../external/eks/eksctl-k8s-controller.sh", {})
+  bootstrap_script = templatefile("../external/${var.auto_script}/eksctl-k8s-controller.sh", {})
 
   security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id]
   keypair_name       = local.keypair_name

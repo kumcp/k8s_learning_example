@@ -21,7 +21,7 @@ kubectl apply -f https://s3.us-west-2.amazonaws.com/amazon-eks/docs/eks-console-
 
 # Add Identify mapping
 eksctl create iamidentitymapping \
-    --cluster mycluster \
+    --cluster mycluster-mng1 \
     --region=ap-southeast-1 \
     --arn arn:aws:iam::666402361323:user/accessCluster \
     --group eks-console-dashboard-full-access-group \
