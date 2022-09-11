@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: es
+  name: es
+  namespace: elk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: es
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: es
+    spec:
+      containers:
+      - image: elasticsearch:8.4.1
+        name: elasticsearch
+        resources:    # Note: this must be provided, or elasticsearch pod will raise error
+          limits:
+            memory: 512Mi
+            cpu: "0.5"
+          requests:
+            memory: 256Mi
+            cpu: "0.5"
+          
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: es
+  name: es-svc
+  namespace: elk
+spec:
+  ports:
+  - port: 9200
+    protocol: TCP
+    targetPort: 30001
+  selector:
+    app: es
+  type: NodePort
+status:
+  loadBalancer: {}
