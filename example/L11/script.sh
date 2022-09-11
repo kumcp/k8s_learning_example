@@ -27,3 +27,8 @@ helm pull elastic/logstash --version 7.17.3 --untar
 helm pull elastic/filebeat --version 7.17.3 --untar
 
 helm pull elastic/elasticsearch --version 7.17.3 --untar
+
+helm pull elastic/kibana --version 7.17.3 --untar
+
+# Install nginx controler config 
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml

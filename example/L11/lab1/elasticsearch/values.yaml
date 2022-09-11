@@ -98,6 +98,7 @@ networkHost: "0.0.0.0"
 
 volumeClaimTemplate:
   accessModes: ["ReadWriteOnce"]
+  storageClassName: manual
   resources:
     requests:
       storage: 1Gi
@@ -152,7 +153,15 @@ extraContainers:
   #   command: ['do', 'something']
 
 extraInitContainers:
-  []
+  - name: file-permissions
+    image: busybox
+    command: ['chown', '-R', '1000:1000', '/usr/share/elasticsearch/']
+    volumeMounts:
+    - mountPath: /usr/share/elasticsearch/data
+      name: elasticsearch-master
+    securityContext:
+      privileged: true
+      runAsUser: 0
   # - name: do-something
   #   image: busybox
   #   command: ['do', 'something']
