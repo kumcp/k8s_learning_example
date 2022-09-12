@@ -1,0 +1,7 @@
+{
+    "search.exclude": {
+        "**/*.yaml": true
+    },
+    "prettier.bracketSpacing": false,
+    "prettier.tabWidth": 2
+}
