@@ -32,3 +32,24 @@ helm pull elastic/kibana --version 7.17.3 --untar
 
 # Install nginx controler config 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/cloud/deploy.yaml
+
+kubectl apply -f PVs.yaml
+#Or
+kubectl apply -f https://raw.githubusercontent.com/kumcp/k8s_learning_example/master/example/L11/lab1/PVs.yaml
+
+
+helm install logstash ./logstash
+helm install filebeat ./filebeat
+helm install elasticsearch ./elasticsearch
+helm install kibana ./kibana
+
+
+
+kubectl get pods, svc
+
+kubectl logs pods/<podname>
+kubectl describe pods/<podname>
+
+kubectl cordon <nodename>
+
+kubectl describe nodes
