@@ -27,7 +27,7 @@ spec:
         app: taa
     spec:
       containers:
-      - name: taa
+      - name: 
         image: <AWS_ACCOUNT_ID>.dkr.ecr.ap-southeast-1.amazonaws.com/php-fpm
         resources:
           limits:
@@ -41,6 +41,12 @@ spec:
         - name: config-vol
           mountPath: "/config/"
           readOnly: true
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: taa-config
+              key: DB_HOST
         ports:
         - containerPort: 9000
       - name: taa-nginx
