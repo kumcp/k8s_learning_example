@@ -1,0 +1,14 @@
+pipeline {
+ agent any
+
+  stages {
+    stage('Deploying App to Kubernetes') {
+      steps {
+        script {
+          kubernetesDeploy(configs: "https://raw.githubusercontent.com/kumcp/k8s_learning_example/master/example/L2/pod1.yaml", kubeconfigId: "kubernetes")
+        }
+      }
+    }
+  }
+
+}

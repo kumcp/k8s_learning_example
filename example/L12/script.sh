@@ -35,6 +35,8 @@ kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernete
 
 kubectl apply -f sa.yaml
 
+kubectl get svc -n jenkins
+
 # Login as admin/<pass from previous step>
 
 # Config
