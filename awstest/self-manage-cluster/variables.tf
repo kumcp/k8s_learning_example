@@ -28,6 +28,13 @@ variable "cri_engine" {
 
 variable "number_of_workers" {
   type        = number
-  description = "number of worker"
+  description = "Number of worker nodes that you want to create"
   default     = 1
+}
+
+
+variable "include_ebs_csi_driver" {
+  type        = bool
+  description = "This setting will add EBS CSI Policy. This is not recommend for learning Storage"
+  default     = false
 }

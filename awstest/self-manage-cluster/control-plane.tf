@@ -137,7 +137,7 @@ resource "aws_iam_role" "control_plane_role" {
             "ssm:DeleteParameters"
           ],
           "Resource" : "*" // TODO: This will need to be more specific to secure, but just keep it simple for now
-        }
+        },
       ]
     })
   }
@@ -147,6 +147,20 @@ resource "aws_iam_role" "control_plane_role" {
   }
 }
 
+
+data "aws_iam_policy" "EBSCSIDriver" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+resource "aws_iam_role_policy_attachment" "EBSCSIDriver-role-policy-attach" {
+  count = var.include_ebs_csi_driver ? 1 : 0
+  role  = aws_iam_role.control_plane_role.name
+
+  # NOTE: This policy should be attached to Nodes which need to create EBS
+  # Because this script is using control_plane_role for both control_plane and worker
+  # -> Attach to this role
+  policy_arn = data.aws_iam_policy.EBSCSIDriver.arn
+}
 
 resource "aws_ssm_parameter" "join_k8s_cluster_cmd" {
   name  = "join_command"
