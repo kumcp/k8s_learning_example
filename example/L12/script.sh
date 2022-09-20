@@ -13,12 +13,9 @@ helm pull jenkinsci/jenkins --untar
 
 # serviceType -> change to NodePort
 # storageClass: ebs-sc
-# serviceAccount: false (created above)
+# serviceAccount: create: false (created above)
 # name: jenkins
 # installPlugins: ?
-# persistence:
-#   ...
-#   size: "8Gi" -> 2Gi
 
 
 helm install jenkins -n jenkins ./jenkins/
@@ -34,8 +31,11 @@ kubectl get -n jenkins -o jsonpath={.spec.ports[0].nodePort} services jenkins
 
 
 # Setup CSI driver
-kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.10"
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.11"
 
+kubectl apply -f sa.yaml
 
 # Login as admin/<pass from previous step>
 
+# Config
+Manage Jenkins -> Configures cloud -> 

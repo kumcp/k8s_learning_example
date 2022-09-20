@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taa-config
+  namespace: taa
+data:
+  taa-env: |
+    APP_DEBUG=true
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taa-deploy
+  namespace: taa
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: taa
+  template:
+    metadata:
+      namespace: taa
+      labels:
+        app: taa
+    spec:
+      containers:
+      - name: 
+        image: <AWS_ACCOUNT_ID>.dkr.ecr.ap-southeast-1.amazonaws.com/php-fpm
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "0.5"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+        # command: ["/bin/sh", "-c", "'source /config/taa-env'"]
+        volumeMounts:
+        - name: config-vol
+          mountPath: "/config/"
+          readOnly: true
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: taa-config
+              key: DB_HOST
+        ports:
+        - containerPort: 9000
+      - name: taa-nginx
+        image: <AWS_ACCOUNT_ID>.dkr.ecr.ap-southeast-1.amazonaws.com/nginx
+        ports:
+        - containerPort: 80
+      volumes:
+      - name: config-vol
+        configMap:
+          name: taa-config
+          items:
+          - key: "taa-env"
+            path: ".env"
