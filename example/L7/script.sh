@@ -42,7 +42,7 @@ kubectl exec -it task-pv-pod3 -- ls /usr/share/nginx/html/
 
 # Apply EBS CSI driver
 
-kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.10"
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.11"
 
 kubectl apply -k dynamic-pvc.yaml
 
