@@ -6,7 +6,7 @@ metadata:
 data:
   taa-env: |
     APP_DEBUG=true
-
+  DB_HOST: mysql
 ---
 apiVersion: apps/v1
 kind: Deployment

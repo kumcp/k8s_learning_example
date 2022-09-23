@@ -33,7 +33,7 @@ variable "number_of_workers" {
 }
 
 
-variable "include_ebs_csi_driver" {
+variable "include_ebs_csi_driver_policy" {
   type        = bool
   description = "This setting will add EBS CSI Policy. This is not recommend for learning Storage"
   default     = false

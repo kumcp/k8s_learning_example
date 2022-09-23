@@ -1,5 +1,6 @@
 ## ElasticSearch
 
+- Is a type of database (SQL exact)
 - Aggregate the information/logs from others
 
 ## 1. Config
