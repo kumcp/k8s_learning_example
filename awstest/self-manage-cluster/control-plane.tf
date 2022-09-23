@@ -153,7 +153,7 @@ data "aws_iam_policy" "EBSCSIDriver" {
 }
 
 resource "aws_iam_role_policy_attachment" "EBSCSIDriver-role-policy-attach" {
-  count = var.include_ebs_csi_driver ? 1 : 0
+  count = var.include_ebs_csi_driver_policy ? 1 : 0
   role  = aws_iam_role.control_plane_role.name
 
   # NOTE: This policy should be attached to Nodes which need to create EBS

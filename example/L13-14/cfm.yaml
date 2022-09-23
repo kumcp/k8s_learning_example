@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: taa-config
-data:
-  taa-env: |
-    APP_DEBUG=true
-
-  DB_HOST: mysql
