@@ -43,7 +43,7 @@ spec:
           readOnly: true
         env:
         - name: APP_DEBUG
-          value: true
+          value: "true"
         - name: DB_USERNAME
           value: root
         - name: DB_PASSWORD
