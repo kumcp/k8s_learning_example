@@ -42,13 +42,16 @@ kubectl exec -it task-pv-pod3 -- ls /usr/share/nginx/html/
 
 # Apply EBS CSI driver
 
-kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.10"
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.11"
 
-kubectl apply -k dynamic-pvc.yaml
+# Apply EFS CSI if needed
+kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.4"
+
+kubectl apply -f dynamic-pvc.yaml
 
 # To release a PV used:
 
-kubectl apply -k StatefulSet.yaml
+kubectl apply -f StatefulSet.yaml
 
 # To modify statefulset, we can scale similar like replicaset
 kubectl scale sts web --replicas=2
