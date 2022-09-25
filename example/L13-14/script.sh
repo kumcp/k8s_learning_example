@@ -25,3 +25,4 @@ kubectl create secret docker-registry regcred \
   --namespace=taa
 
 
+kubectl exec -it <pod-name> -n taa -- php artisan migrate

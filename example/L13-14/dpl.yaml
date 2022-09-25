@@ -4,9 +4,11 @@ metadata:
   name: taa-config
   namespace: taa
 data:
-  taa-env: |
-    APP_DEBUG=true
-  DB_HOST: mysql
+  APP_DEBUG: "true"
+  DB_HOST: mysql.taa
+  DB_USERNAME: root
+  DB_PASSWORD: password
+  DB_NAME: taskassign
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,13 +45,25 @@ spec:
           readOnly: true
         env:
         - name: APP_DEBUG
-          value: "true"
+          valueFrom:
+            configMapKeyRef:
+              name: taa-config
+              key: APP_DEBUG
         - name: DB_USERNAME
-          value: root
+          valueFrom:
+            configMapKeyRef:
+              name: taa-config
+              key: DB_USERNAME
         - name: DB_PASSWORD
-          value: "password"
+          valueFrom:
+            configMapKeyRef:
+              name: taa-config
+              key: DB_PASSWORD
         - name: DB_NAME
-          value: taskassign    
+          valueFrom:
+            configMapKeyRef:
+              name: taa-config
+              key: DB_NAME   
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:
