@@ -4,6 +4,8 @@ metadata:
   name: taa-config
   namespace: taa
 data:
+  taa-env: |
+    APP_DEBUG=true
   APP_DEBUG: "true"
   DB_HOST: mysql.taa
   DB_USERNAME: root
