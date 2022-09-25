@@ -42,6 +42,14 @@ spec:
           mountPath: "/config/"
           readOnly: true
         env:
+        - name: APP_DEBUG
+          value: true
+        - name: DB_USERNAME
+          value: root
+        - name: DB_PASSWORD
+          value: "password"
+        - name: DB_NAME
+          value: taskassign    
         - name: DB_HOST
           valueFrom:
             configMapKeyRef:

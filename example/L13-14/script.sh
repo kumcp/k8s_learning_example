@@ -1,4 +1,13 @@
 
+
+kubectl create ns taa
+
+# Modify dpl.yaml
+# containers[0].name ->
+
+kubectl apply -f ./
+
+
 # Setup ECR auto refresh token
 
 kubectl create secret docker-registry regcred \
@@ -14,3 +23,5 @@ kubectl create secret docker-registry regcred \
   --docker-username=AWS \
   --docker-password=$(aws ecr get-login-password) \
   --namespace=taa
+
+
