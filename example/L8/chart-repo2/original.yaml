@@ -30,7 +30,7 @@ spec:
             - containerPort: 80
           env:
             - name: version
-              valuesFrom:
+              valueFrom:
                 configMapKeyRef:
                   name: k-app-configmap
                   key: codestarAppVer
