@@ -74,7 +74,7 @@ spec:
         ports:
         - containerPort: 9000
       - name: taa-nginx
-        image: <AWS_ACCOUNT_ID>.dkr.ecr.ap-southeast-1.amazonaws.com/nginx
+        image: <AWS_ACCOUNT_ID>.dkr.ecr.ap-southeast-1.amazonaws.com/built-nginx
         ports:
         - containerPort: 80
       volumes:
