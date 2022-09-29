@@ -1,13 +1,14 @@
 
+
 git clone https://github.com/kumcp/task-assign-app.git
 
 cd task-assign-app
 
-docker build -f ./Dockerfile -t php-web:latest .
+docker build -f ./Dockerfile -t php-fpm:latest .
 docker build -f ./deploy-helper/nginx/Dockerfile.nginx -t built-nginx:latest .
 
-export ECR_IMAGE_REGION=<REGION_ID>
-export AWS_ACCOUNT_ID=<AWS_ACCOUNT_ID>
+export ECR_IMAGE_REGION=ap-southeast-1
+export AWS_ACCOUNT_ID=666402361323
 
 aws ecr get-login-password --region $ECR_IMAGE_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$ECR_IMAGE_REGION.amazonaws.com
 
@@ -17,10 +18,11 @@ docker push $AWS_ACCOUNT_ID.dkr.ecr.$ECR_IMAGE_REGION.amazonaws.com/built-nginx:
 docker tag php-fpm:latest $AWS_ACCOUNT_ID.dkr.ecr.$ECR_IMAGE_REGION.amazonaws.com/php-fpm:latest
 docker push $AWS_ACCOUNT_ID.dkr.ecr.$ECR_IMAGE_REGION.amazonaws.com/php-fpm:latest
 
-
+cd ~
 
 git clone https://github.com/kumcp/k8s_learning_example.git
 
+cd k8s_learning_example/example/L13-14/
 
 kubectl create ns taa
 kubectl create ns adminer
@@ -45,11 +47,6 @@ kubectl apply -f ./
 
 
 # Run migration
-export POD_RUN=<POD_RUNNING>
+export POD_RUN=??
 kubectl exec -it $POD_RUN -n taa -- php artisan migrate
 kubectl exec -it $POD_RUN -n taa -- php artisan db:seed --class=DatabaseSeeder
-
-
-kubectl get all -n taa
-kubectl get all -n adminer
-
