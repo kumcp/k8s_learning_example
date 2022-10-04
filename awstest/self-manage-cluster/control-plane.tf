@@ -33,7 +33,17 @@ module "control_plane" {
   // Usage of template has been deprecated.
   # bootstrap_script = data.template_file.control_plane_user_data.rendered
 
-  bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
+  # bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
+
+  bootstrap_script = templatefile("../external/templatescript.tftpl", {
+    script_list : [
+      templatefile("../external/script/awscli.sh", {}),
+      templatefile("../external/script/k8s-containerd.sh", {}),
+      templatefile("../external/script/config-crictl.sh", {}),
+      templatefile("../external/script/create-cluster.sh", {})
+    ]
+  })
+
 
   role = aws_iam_role.control_plane_role.name
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
