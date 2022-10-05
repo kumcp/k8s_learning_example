@@ -1,6 +1,4 @@
-terraform {
-  experiments = [module_variable_optional_attrs]
-}
+
 
 locals {
   vpc_id       = var.vpc_id == "" ? data.aws_vpc.default.id : var.vpc_id
