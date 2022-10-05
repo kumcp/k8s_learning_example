@@ -8,13 +8,14 @@ terraform {
 }
 
 provider "aws" {
-  region = "ap-southeast-1"
+  region = local.region
 }
 
 ## To use template_file, you will need to use template provider
 
 
 locals {
+  region                        = var.region
   keypair_name                  = var.keypair_name
   instance_type_master          = var.instance_type_master
   control_plane_instance_name   = var.control_plane_instance_name
@@ -29,9 +30,26 @@ locals {
 # You can put some variable here to render
 # }
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+
 module "control_plane" {
   source = "../module/ec2_bootstrap"
-
+  ami    = data.aws_ami.ubuntu.id
   // Usage of template has been deprecated.
   # bootstrap_script = data.template_file.control_plane_user_data.rendered
 

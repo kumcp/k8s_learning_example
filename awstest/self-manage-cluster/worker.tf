@@ -18,7 +18,7 @@ module "workers" {
   source = "../module/ec2_bootstrap"
   # bootstrap_script = data.template_file.woker_user_data.rendered
   # bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-worker.sh", {})
-
+  ami = data.aws_ami.ubuntu.id
   bootstrap_script = templatefile("../external/templatescript.tftpl", {
     script_list : [
       templatefile("../external/script/awscli.sh", {}),

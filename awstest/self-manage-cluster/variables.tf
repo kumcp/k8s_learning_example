@@ -13,6 +13,11 @@ variable "instance_type" {
   description = "Instance type for worker"
 }
 
+variable "region" {
+  type        = string
+  description = "Specific region for your account"
+}
+
 
 variable "control_plane_instance_name" {
   type        = string
