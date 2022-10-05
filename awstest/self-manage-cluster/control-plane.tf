@@ -15,10 +15,12 @@ provider "aws" {
 
 
 locals {
-  keypair_name                = var.keypair_name
-  instance_type_master        = var.instance_type_master
-  control_plane_instance_name = var.control_plane_instance_name
-  cp_engine                   = var.cri_engine
+  keypair_name                  = var.keypair_name
+  instance_type_master          = var.instance_type_master
+  control_plane_instance_name   = var.control_plane_instance_name
+  cp_engine                     = var.cri_engine
+  include_components            = var.include
+  include_ebs_csi_driver_policy = var.include_policy_ebs_csi_driver
 }
 // Usage of template has been deprecated.
 # data "template_file" "control_plane_user_data" {
@@ -33,7 +35,20 @@ module "control_plane" {
   // Usage of template has been deprecated.
   # bootstrap_script = data.template_file.control_plane_user_data.rendered
 
-  bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
+  # bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-control-plane.sh", {})
+
+  bootstrap_script = templatefile("../external/templatescript.tftpl", {
+    script_list : [
+      templatefile("../external/script/awscli.sh", {}),
+      templatefile("../external/script/k8s-containerd.sh", {}),
+      templatefile("../external/script/config-crictl.sh", {}),
+      templatefile("../external/script/create-cluster.sh", {}),
+      contains(local.include_components, "helm") ? templatefile("../external/script/helm.sh", {}) : "",
+      contains(local.include_components, "etcd") ? templatefile("../external/script/etcd-client.sh", {}) : "",
+      contains(local.include_components, "ebs-csi-driver") ? templatefile("../external/script/driver/ebs-csi-driver.sh", {}) : "",
+    ]
+  })
+
 
   role = aws_iam_role.control_plane_role.name
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
@@ -153,7 +168,7 @@ data "aws_iam_policy" "EBSCSIDriver" {
 }
 
 resource "aws_iam_role_policy_attachment" "EBSCSIDriver-role-policy-attach" {
-  count = var.include_ebs_csi_driver_policy ? 1 : 0
+  count = local.include_ebs_csi_driver_policy ? 1 : 0
   role  = aws_iam_role.control_plane_role.name
 
   # NOTE: This policy should be attached to Nodes which need to create EBS

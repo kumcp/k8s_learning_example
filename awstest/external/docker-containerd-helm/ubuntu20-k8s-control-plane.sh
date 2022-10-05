@@ -88,6 +88,13 @@ net.ipv4.ip_forward = 1
 sudo sysctl --system
 
 
+sudo apt-get update
+
+echo "============INSTALL DOCKER =============="
+
+sudo apt-get install docker-ce docker-ce-cli -y
+sudo chmod 666 /var/run/docker.sock
+
 
 sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
 
@@ -97,30 +104,25 @@ sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Install weave (is having a problem with 1 master, 2 workers)
-# echo "============Install weave net============"
-# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
-# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf
 
+# Install weave (is having a problem with 1 master, 2 workers)
+echo "============Install weave net============"
+# kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=1.24.3"
+
+
 # Install calico CNI
-echo "============Install Calico CNI ============"
+# echo "============Install Calico CNI ============"
 # kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
 # curl https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml -O
 # kubectl create -f custom-resources.yaml
 # curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
 # kubectl apply -f calico.yaml
-kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
-kubectl create -f https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml
-kubectl apply -f https://projectcalico.docs.tigera.io/manifests/calico.yaml
 
 
-
-# Run as root
-#  export KUBECONFIG=/etc/kubernetes/admin.conf
-
-# Run as regular usesr
+# Run as reegular usesr
 # mkdir -p $HOME/.kube
 # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 # sudo chown $(id -u):$(id -g) $HOME/.kube/config
@@ -129,3 +131,9 @@ kubectl apply -f https://projectcalico.docs.tigera.io/manifests/calico.yaml
 ##### UPLOAD JOIN COMMAND INTO SSM PARAMETER
 
 aws ssm put-parameter --name=join_command  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+"alias k='kubectl'" >> /home/ubuntu/.bashrc

@@ -4,4 +4,5 @@ instance_type               =
 control_plane_instance_name = 
 cri_engine                  = 
 number_of_workers           = 
-include_ebs_csi_driver      = false
+include_policy_ebs_csi_driver      = false
+include                       = ["helm", "ebs-csi-driver"]

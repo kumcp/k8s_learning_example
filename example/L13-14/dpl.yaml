@@ -31,7 +31,7 @@ spec:
         app: taa
     spec:
       containers:
-      - name: 
+      - name: taa-php
         image: <AWS_ACCOUNT_ID>.dkr.ecr.ap-southeast-1.amazonaws.com/php-fpm
         resources:
           limits:
@@ -77,10 +77,3 @@ spec:
         image: <AWS_ACCOUNT_ID>.dkr.ecr.ap-southeast-1.amazonaws.com/built-nginx
         ports:
         - containerPort: 80
-      volumes:
-      - name: config-vol
-        configMap:
-          name: taa-config
-          items:
-          - key: "taa-env"
-            path: ".env"

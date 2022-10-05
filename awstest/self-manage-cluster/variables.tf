@@ -33,8 +33,15 @@ variable "number_of_workers" {
 }
 
 
-variable "include_ebs_csi_driver_policy" {
+variable "include_policy_ebs_csi_driver" {
   type        = bool
   description = "This setting will add EBS CSI Policy. This is not recommend for learning Storage"
   default     = false
+}
+
+
+variable "include" {
+  type        = list(any)
+  description = "This setting will install things at bootstrap. Allowed Values are: helm, etcd, ebs-csi"
+  default     = []
 }
