@@ -1,8 +1,9 @@
 .terraform/
 .terraform.lock.hcl
 
-*.tfstate
+*.tfstate*
 *.tfstate.backup
 
 terraform.tfvars
+
 

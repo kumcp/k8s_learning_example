@@ -1,4 +1,4 @@
-sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5 
+sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5 --cri-socket=unix:///var/run/cri-dockerd.sock
 
 mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config

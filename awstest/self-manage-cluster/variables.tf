@@ -25,12 +25,6 @@ variable "control_plane_instance_name" {
 }
 
 
-variable "cri_engine" {
-  type        = string
-  description = "CRI Engine for k8s cluster. Can be: containerd (default), docker, podman"
-  default     = "containerd"
-}
-
 variable "number_of_workers" {
   type        = number
   description = "Number of worker nodes that you want to create"
