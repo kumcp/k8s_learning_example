@@ -1,15 +1,11 @@
 ## To use template_file, you will need to use template provider
 
 locals {
-  worker_engine        = var.cri_engine
   worker_instance_type = var.instance_type
   worker_keypair       = var.keypair_name
   worker_name          = "worker"
   number_of_workers    = var.number_of_workers
 }
-
-# data "template_file" "woker_user_data" {
-#   template = file("../external/${local.worker_engine}/ubuntu20-k8s-worker.sh")
 
 #   # You can put some variable here to render
 # }
@@ -18,13 +14,14 @@ module "workers" {
   source = "../module/ec2_bootstrap"
   # bootstrap_script = data.template_file.woker_user_data.rendered
   # bootstrap_script = templatefile("../external/${local.cp_engine}/ubuntu20-k8s-worker.sh", {})
-
+  ami = data.aws_ami.ubuntu.id
   bootstrap_script = templatefile("../external/templatescript.tftpl", {
     script_list : [
       templatefile("../external/script/awscli.sh", {}),
       templatefile("../external/script/k8s-containerd.sh", {}),
       templatefile("../external/script/config-crictl.sh", {}),
-      templatefile("../external/script/join-cluster.sh", {})
+      contains(local.include_components, "docker") ? templatefile("../external/script/docker.sh", {}) : "",
+      contains(local.include_components, "cri-docker") ? templatefile("../external/script/join-cluster-docker.sh", {}) : templatefile("../external/script/join-cluster.sh", {}),
     ]
   })
 
