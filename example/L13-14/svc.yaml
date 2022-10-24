@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: taa-svc
-  namespace: taa
 spec:
   type: NodePort
   selector:

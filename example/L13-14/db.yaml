@@ -31,9 +31,15 @@ spec:
         name: mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: password
+          valueFrom:
+            configMapKeyRef:
+             name: taa-config
+             key: DB_PASSWORD
         - name: MYSQL_DATABASE
-          value: taskassign
+          valueFrom:
+            configMapKeyRef:
+             name: taa-config
+             key: DB_NAME
         ports:
         - containerPort: 3306
           name: mysql
