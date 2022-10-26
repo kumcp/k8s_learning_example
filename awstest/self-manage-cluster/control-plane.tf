@@ -80,6 +80,15 @@ module "public_ssh_http" {
   public_ports = ["80", "22"]
 }
 
+module "k8s_public_sg" {
+  source      = "../module/common_sg"
+  name_suffix = "k8s_public"
+  rules = [{
+    from_port   = "30000"
+    to_port     = "33000"
+    cidr_blocks = ["0.0.0.0/0"]
+  }]
+}
 
 module "k8s_cluster_sg" {
   source      = "../module/common_sg"
