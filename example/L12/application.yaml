@@ -4,10 +4,11 @@ metadata:
   name: taa-app
   namespace: argocd
 spec:
-  project: taa
+  project: default
 
   source:
-    repoURL: ssh://APKAZWKFNB7VV666HIP2@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/k8s08
+    repoURL: ssh://<SSH-id>@<ssh-url>
+    targetRevision: develop
     path: example/L13-14
 
     directory:
