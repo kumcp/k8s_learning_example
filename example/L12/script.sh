@@ -7,9 +7,11 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 sudo curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
 sudo chmod +x /usr/local/bin/argocd
 
+# Change service to NodePort:
+kubectl patch svc -n argocd argocd-server --patch '{"spec": {"type": "NodePort"}}'
+
 # After install, we can log in ArgoCD CLI by username and password or
 # Publish WebUI to access
-
 
 
 # Default username: admin
@@ -33,6 +35,14 @@ argocd app create testrepo -f ./svc.yaml --dest-namespace default --dest-server 
 
 ssh-keygen
 
-argocd repo add ssh://APKAZWKFNB7VWNVJ3S54@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/test-repo --ssh-private-key-path /home/kum/.ssh/id_rsa  --insecure-skip-server-verification
+cat /home/ubuntu/.ssh/id_rsa.pub
 
+argocd repo add ssh://APKAZWKFNB7VWNVJ3S54@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/test-repo --ssh-private-key-path /home/ubuntu/.ssh/id_rsa  --insecure-skip-server-verification
 
+argocd repo add --name repo-git git@github.com:kumcp/k8s_learning_example.git  --ssh-private-key-path /home/ubuntu/.ssh/id_rsa
+
+argocd repo list
+
+kubectl get svc -n argocd
+
+kubectl apply -f application.yaml
