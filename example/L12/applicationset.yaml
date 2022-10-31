@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: myappset
+spec:
+  generators:
+  - list:
+      elements:
+      - cluster: cluster-dev
+        url: https://kubernetes.default.svc
+      - cluster: cluster-prod
+        url: https://1.2.3.4
+      - cluster: cluster-preprod
+        url: https://9.8.7.6
+  template:
+    metadata:
+      name: '{{cluster}}-taa'
+    spec:
+      project: default
+      source:
+        repoURL: ssh://APKAZWKFNB7VV666HIP2@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/k8s08
+        targetRevision: develop
+        path: example/L12/{{cluster}}
+      destination:
+        server: '{{url}}'
+        namespace: taa

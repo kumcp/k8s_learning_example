@@ -62,13 +62,15 @@ module "control_plane" {
       contains(local.include_components, "helm") ? templatefile("../external/script/helm.sh", {}) : "",
       contains(local.include_components, "etcd") ? templatefile("../external/script/etcd-client.sh", {}) : "",
       contains(local.include_components, "ebs-csi-driver") ? templatefile("../external/script/driver/ebs-csi-driver.sh", {}) : "",
+      contains(local.include_components, "argocd") ? templatefile("../external/script/argocd.sh", {}) : "",
+      contains(local.include_components, "argocd-cli") ? templatefile("../external/script/argocd-cli.sh", {}) : "",
     ]
   })
 
 
   role = aws_iam_role.control_plane_role.name
   # security_group_ids = setunion(module.public_ssh_http.public_sg_ids, module.public_ssh_http.specific_sg_ids)
-  security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id, module.k8s_cluster_worker_sg.specific_sg_id]
+  security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id, module.k8s_cluster_worker_sg.specific_sg_id, module.k8s_public_sg.public_sg_id]
   keypair_name       = local.keypair_name
   instance_type      = local.instance_type_master
   name               = local.control_plane_instance_name
@@ -80,6 +82,15 @@ module "public_ssh_http" {
   public_ports = ["80", "22"]
 }
 
+module "k8s_public_sg" {
+  source      = "../module/common_sg"
+  name_suffix = "k8s_public"
+  rules = [{
+    from_port   = "30000"
+    to_port     = "33000"
+    cidr_blocks = ["0.0.0.0/0"]
+  }]
+}
 
 module "k8s_cluster_sg" {
   source      = "../module/common_sg"
