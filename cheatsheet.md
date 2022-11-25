@@ -27,10 +27,6 @@ kubectl rollout restart
 kubectl rollout
 
 
-
-
-
-
 # Apply
 kubectl apply -f ./my-manifest.yaml            # create resource(s)
 kubectl apply -f ./my1.yaml -f ./my2.yaml      # create from multiple files

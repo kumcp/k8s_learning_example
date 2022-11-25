@@ -12,7 +12,7 @@ echo \
 
 sudo apt-get update
 
-echo "============INSTALL DOCKER AND CONTAINERD=============="
+echo "============INSTALL CONTAINERD=============="
 
 sudo apt-get install containerd.io -y
 
