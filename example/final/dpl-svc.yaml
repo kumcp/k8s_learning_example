@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taa-dpl
+  namespace: taa
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taa
+  template:
+    metadata:
+      labels:
+        app: taa
+      namespace: taa
+    spec:
+      containers:
+      - name: taa-project
+        image: 666402361323.dkr.ecr.ap-southeast-1.amazonaws.com/php-fpm
+        ports:
+        - containerPort: 9000
+        env:
+        - name: APP_DEBUG
+          value: "true"
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_pass
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_name   
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_host
+      - name: taa-nginx
+        image: 666402361323.dkr.ecr.ap-southeast-1.amazonaws.com/nginx
+        ports:
+        - containerPort: 80
+          name: http-web
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: taa-svc
+  namespace: taa
+spec:
+  selector:
+    app: taa
+  type: NodePort
+  ports:
+  - name: name-of-service-port
+    protocol: TCP
+    port: 80
+    nodePort: 30000
+    targetPort: http-web

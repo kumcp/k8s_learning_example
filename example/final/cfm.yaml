@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taa-cfm
+  namespace: taa
+  labels:
+    app: taa
+data:
+  db_host: db.taa
+  db_port: "3306"
+  db_name: taskassign
+  db_user: root
+  db_pass: "12345678"

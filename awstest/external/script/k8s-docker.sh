@@ -55,3 +55,5 @@ echo '{ "exec-opts": ["native.cgroupdriver=systemd"]}' > /etc/docker/daemon.json
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 sudo systemctl restart kubelet
+
+
