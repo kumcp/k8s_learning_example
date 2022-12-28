@@ -8,7 +8,6 @@ variable "account_id" {
 variable "keypair_name" {
   type        = string
   description = "Input keypair name. You need to create key by yourself first"
-  default     = "codestar-group"
 }
 
 variable "instance_type" {

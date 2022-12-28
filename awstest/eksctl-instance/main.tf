@@ -20,9 +20,27 @@ locals {
   account_id = var.account_id
 }
 
-module "eksctl_instance" {
-  source = "../module/ec2_bootstrap"
 
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+
+module "eksctl_instance" {
+  source           = "../module/ec2_bootstrap"
+  ami              = data.aws_ami.ubuntu.id
   bootstrap_script = templatefile("../external/${var.auto_script}/eksctl-k8s-controller.sh", {})
 
   security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id]

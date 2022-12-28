@@ -1,4 +1,4 @@
-sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5 
+sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5 --node-name master
 
 mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
@@ -38,3 +38,4 @@ kubectl apply -f https://projectcalico.docs.tigera.io/manifests/calico.yaml
 ##### UPLOAD JOIN COMMAND INTO SSM PARAMETER
 
 aws ssm put-parameter --name=join_command  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
+aws ssm put-parameter --name=number_of_workers  --type=String --value=0 --overwrite

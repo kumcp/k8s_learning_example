@@ -37,7 +37,14 @@ ssh-keygen
 
 cat /home/ubuntu/.ssh/id_rsa.pub
 
-argocd repo add ssh://APKAZWKFNB7VWNVJ3S54@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/test-repo --ssh-private-key-path /home/ubuntu/.ssh/id_rsa  --insecure-skip-server-verification
+git clone https://github.com/kumcp/k8s_learning_example.git
+
+cd k8s_learning_example
+
+git remote add cc ssh://APKAZWKFNB7VWNVJ3S54@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/argo
+
+
+argocd repo add ssh://APKAZWKFNB7VWNVJ3S54@git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/argo --ssh-private-key-path /home/ubuntu/.ssh/id_rsa  --insecure-skip-server-verification
 
 argocd repo add --name repo-git git@github.com:kumcp/k8s_learning_example.git  --ssh-private-key-path /home/ubuntu/.ssh/id_rsa
 
