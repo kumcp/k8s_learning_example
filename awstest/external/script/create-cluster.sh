@@ -1,4 +1,4 @@
-sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5 --node-name master
+sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
 
 mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config

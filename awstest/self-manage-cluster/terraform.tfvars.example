@@ -5,7 +5,7 @@ control_plane_instance_name =
 region                      = "us-east-1"
 number_of_workers           = 
 include_policy_ebs_csi_driver      = false
-include                     = ["docker", "cri-docker", "etcd" , "helm", "ebs-csi-driver", "argocd"]
+include                     = []
 # docker, cri-docker: config kubernetes cluster with docker (> v1.24). without this tag, containerd will be used
 # etcd              : etcd client to communicate with etcd
 # helm              : include helm

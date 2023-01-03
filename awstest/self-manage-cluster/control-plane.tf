@@ -58,6 +58,8 @@ module "control_plane" {
       templatefile("../external/script/k8s-containerd.sh", {}),
       templatefile("../external/script/config-crictl.sh", {}),
       contains(local.include_components, "docker") ? templatefile("../external/script/docker.sh", {}) : "",
+      contains(local.include_components, "cri-docker") ? templatefile("../external/script/cri-docker.sh", {}) : "",
+      // Create cluster command
       contains(local.include_components, "cri-docker") ? templatefile("../external/script/create-cluster-docker.sh", {}) : templatefile("../external/script/create-cluster.sh", {}),
       contains(local.include_components, "helm") ? templatefile("../external/script/helm.sh", {}) : "",
       contains(local.include_components, "etcd") ? templatefile("../external/script/etcd-client.sh", {}) : "",
