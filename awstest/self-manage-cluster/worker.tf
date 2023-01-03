@@ -21,6 +21,8 @@ module "workers" {
       templatefile("../external/script/k8s-containerd.sh", {}),
       templatefile("../external/script/config-crictl.sh", {}),
       contains(local.include_components, "docker") ? templatefile("../external/script/docker.sh", {}) : "",
+      contains(local.include_components, "cri-docker") ? templatefile("../external/script/cri-docker.sh", {}) : "",
+      // Join cluster command
       contains(local.include_components, "cri-docker") ? templatefile("../external/script/join-cluster-docker.sh", {}) : templatefile("../external/script/join-cluster.sh", {}),
     ]
   })
