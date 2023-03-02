@@ -1,15 +1,9 @@
-!/bin/bash
+#!/bin/bash
 
 sudo apt-get update
 
 
-##### INSTALL AWSCLI
-sudo apt install unzip
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-
+# Step 1: Install dependencies
 sudo apt-get install \
     ca-certificates \
     curl \
@@ -24,12 +18,15 @@ echo \
 
 sudo apt-get update
 
+
+
+# Step 2: Install containerd
 echo "============INSTALL CONTAINERD=============="
 
 sudo apt-get install containerd.io -y
 
 
-# Install kubernetes
+# Step 3: Install kubernete dependencies
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
 
@@ -37,7 +34,8 @@ sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://pack
 
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
-echo "===========INSTALL KUBETLET & KUBEADM & KUBECTL ============="
+# Step 4: Install kubelet, kubeadm, kubectl
+echo "===========INSTALL KUBELET & KUBEADM & KUBECTL ============="
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 sudo apt-mark hold kubelet kubeadm kubectl
@@ -47,11 +45,8 @@ sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 
-systemctl daemon-reload
-systemctl enable --now containerd
 
-
-# Make sure this script run after k8s-containerd
+# Step 5: Config CRI
 
 systemctl daemon-reload
 systemctl enable --now containerd
@@ -72,7 +67,8 @@ sudo systemctl restart containerd
 
 sudo apt install gnupg2 software-properties-common apt-transport-https -y
 
-#### CONFIG KERNEL IF NOT USE DOCKER
+#### Step 6: CONFIG KERNEL IF NOT USE DOCKER
+
 modprobe overlay
 modprobe br_netfilter
 echo """
@@ -82,9 +78,12 @@ net.ipv4.ip_forward = 1
 """ > /etc/sysctl.d/kubernetes.conf
 sudo sysctl --system
 
+### STEP 7 IMPORTANT: CREATE CLUSTER
 
 sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
 
+
+# Step 8: Config permission for user ubuntu. If your host using other User, please change the name
 mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
@@ -92,16 +91,9 @@ sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
 
-# Install calico CNI
+# Step 9: Install calico CNI
 echo "============Install Calico CNI ============"
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/custom-resources.yaml
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
-
-
-
-##### UPLOAD JOIN COMMAND INTO SSM PARAMETER
-
-aws ssm put-parameter --name=join_command  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
-aws ssm put-parameter --name=number_of_workers  --type=String --value=0 --overwrite
