@@ -2,14 +2,7 @@
 
 sudo apt-get update
 
-
-##### INSTALL AWSCLI
-sudo apt install unzip
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-
-
+# Step 1: Install dependencies
 sudo apt-get install \
     ca-certificates \
     curl \
@@ -24,12 +17,13 @@ echo \
 
 sudo apt-get update
 
+# Step 2: Install containerd
 echo "============INSTALL CONTAINERD=============="
 
 sudo apt-get install containerd.io -y
 
 
-# Install kubernetes
+# Step 3: Install kubernete dependencies
 
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
@@ -38,6 +32,7 @@ sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://pack
 
 echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
+# Step 4: Install kubelet, kubeadm, kubectl
 echo "===========INSTALL KUBETLET & KUBEADM & KUBECTL ============="
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
@@ -49,11 +44,8 @@ sudo apt-mark hold kubelet kubeadm kubectl
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 
-systemctl daemon-reload
-systemctl enable --now containerd
 
-
-# Make sure this script run after k8s-containerd
+# Step 5: Config CRI
 
 systemctl daemon-reload
 systemctl enable --now containerd
@@ -74,7 +66,8 @@ sudo systemctl restart containerd
 
 sudo apt install gnupg2 software-properties-common apt-transport-https -y
 
-#### CONFIG KERNEL IF NOT USE DOCKER
+#### Step 6: CONFIG KERNEL IF NOT USE DOCKER
+
 modprobe overlay
 modprobe br_netfilter
 echo """
@@ -87,16 +80,7 @@ sudo sysctl --system
 
 # Make sure this script run after k8s-containerd
 
-while true
-do
-sleep 2s
-result=$(aws ssm get-parameter --name join_command --output text --query "Parameter.Value")
-echo $result
-if [[ "$result" == *"kubeadm"* ]]; then
-  echo "breaked"
-  break
-fi
-done
-
-sudo $(aws ssm get-parameter --name join_command --output text --query "Parameter.Value" | sed -e "s/\\\\//g")
-
+### STEP 7 IMPORTANT: JOIN CLUSTER
+# Please copy the join cluster command from control-plane and run here. If you want to modify the name, you can use flag: [--node-name worker2]
+# This is an example:
+# sudo kubeadm join 172.31.24.170:6443 --token cg5km7.873g3fa1055pw4ka --discovery-token-ca-cert-hash sha256:0e0343200d3a7bf573ab76b8882da4cc587e42e1479bf4681b4c3567dec8b335 --node-name worker2
