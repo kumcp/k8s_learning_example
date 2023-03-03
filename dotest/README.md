@@ -8,3 +8,10 @@ There are 2 files in droplet-u22, which used for droplet ubuntu 22.10. After cre
 control-plane.sh
 worker.sh
 ```
+
+You can run the fast script using this command:
+
+```
+git clone https://github.com/kumcp/k8s_learning_example.git
+sh ./k8s_learning_example/dotest/droplet-u22/control-plane.sh
+```

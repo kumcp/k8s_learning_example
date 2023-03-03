@@ -1,7 +1,11 @@
 #!/bin/bash
 
-## Run these command in root user
 
+# Step 0: This step is specific for ubuntu 22.10 only.
+# This is for stop showing confirm box restarting packagekit
+sed -i "/#\$nrconf{restart} = 'i';/s/.*/\$nrconf{restart} = 'a';/" /etc/needrestart/needrestart.conf
+
+## Run these command in root user
 sudo apt-get update
 
 
