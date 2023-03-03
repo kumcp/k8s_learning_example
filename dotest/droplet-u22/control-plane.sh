@@ -84,20 +84,25 @@ net.ipv4.ip_forward = 1
 """ > /etc/sysctl.d/kubernetes.conf
 sudo sysctl --system
 
-### STEP 7 IMPORTANT: CREATE CLUSTER
+
+# Step 7: Swap off resource
+swapoff -a && sed -i '/ swap / s/^/#/' /etc/fstab 
+
+
+# STEP 8 IMPORTANT: CREATE CLUSTER
 
 kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5
 
 
-# Step 8: Config permission for user ubuntu. If your host using other User, please change the name
-mkdir -p /home/ubuntu/.kube
-sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
-sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
+# Step 9: Config permission for user root. If your host using other User, for example ubuntu, please change the name
+
+# mkdir -p /home/ubuntu/.kube
+# sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+# sudo chown ubuntu:ubuntu /home/ubuntu/.kube/config
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-
-# Step 9: Install calico CNI
+# Step 10: Install calico CNI
 echo "============Install Calico CNI ============"
 
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/tigera-operator.yaml
