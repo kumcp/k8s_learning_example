@@ -51,9 +51,16 @@ apt-mark hold kubelet kubeadm kubectl
 # Step 5: CREATE CLUSTER
 kubeadm init
 
+kubectl get node
 
 # Step 6: Config access cluster as root
-source KUBECONFIG=/etc/kubernetes/admin.conf
+
+# Note: This line only work if you run the whole .sh file. 
+echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /root/.bashrc
+source /root/.bashrc
+
+# If you want to copy the code and run, please use:
+# export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Step 7: Config crictl for debugging:
 echo """
