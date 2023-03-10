@@ -16,5 +16,5 @@ git clone https://github.com/kumcp/k8s_learning_example.git
 cd ./k8s_learning_example/
 git checkout develop
 cd ~
-sh ./k8s_learning_example/dotest/droplet-u22/control-plane.sh
+sh ./k8s_learning_example/dotest/droplet-u20/control-plane.sh
 ```
