@@ -16,34 +16,78 @@ resource "digitalocean_tag" "cluster-tag" {
 }
 
 locals {
-  region       = "sgp1"
-  cp_image     = "ubuntu-22-10-x64"
-  cp_size      = "s-2vcpu-2gb"
+  region   = "sgp1"
+  cp_image = "ubuntu-22-10-x64"
+  cp_size  = "s-2vcpu-2gb"
+  cp_name  = "control-plane"
+
   worker_image = "ubuntu-22-10-x64"
   worker_size  = "s-2vcpu-2gb"
+  worker_name  = "worker"
 
   tags         = [digitalocean_tag.cluster-tag.name]
   project_name = "sm-cluster"
 }
 
+module "key" {
+  source = "../../../terraform/module/ssh-key"
+
+  private_key_path = "./key.pem"
+  public_key_path  = "./id_rsa.pub"
+}
+
+resource "digitalocean_ssh_key" "ssh_key" {
+  name       = "ssh-key"
+  public_key = module.key.public_key
+}
 
 resource "digitalocean_droplet" "cp" {
   image     = local.cp_image
-  name      = "control-plane"
+  name      = local.cp_name
   region    = local.region
   size      = local.cp_size
   tags      = local.tags
+  ssh_keys  = [digitalocean_ssh_key.ssh_key.id]
   user_data = templatefile("../../droplet-u22/control-plane.sh", {})
+
+  # connection {
+  #   type        = "ssh"
+  #   user        = "root"
+  #   private_key = module.key.private_key
+  #   host        = self.ipv4_address
+  # }
+  # provisioner "remote-exec" {
+
+  #   inline = [
+  #     "sleep 120",
+  #     "kubeadm token create 123456.1234567890123456",
+  #   ]
+  # }
 }
 
 
 resource "digitalocean_droplet" "worker" {
   image     = local.worker_image
-  name      = "worker"
+  name      = local.worker_name
   region    = local.region
   size      = local.worker_size
   tags      = local.tags
+  ssh_keys  = [digitalocean_ssh_key.ssh_key.id]
   user_data = templatefile("../../droplet-u22/worker.sh", {})
+
+  # connection {
+  #   type        = "ssh"
+  #   user        = "root"
+  #   private_key = module.key.private_key
+  #   host        = self.ipv4_address
+  # }
+  # provisioner "remote-exec" {
+
+  #   inline = [
+  #     "sleep 180",
+  #     "kubeadm join ${digitalocean_droplet.cp.ipv4_address}:6443 123456.1234567890123456 --discovery-token-unsafe-skip-ca-verification",
+  #   ]
+  # }
 }
 
 

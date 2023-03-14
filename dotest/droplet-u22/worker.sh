@@ -1,3 +1,4 @@
+#!/bin/bash
 
 
 # Step 1: Turn off swap
@@ -52,6 +53,7 @@ apt-mark hold kubelet kubeadm kubectl
 echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /root/.bashrc
 source /root/.bashrc
 
+export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Step 6: Config crictl for debugging:
 echo """

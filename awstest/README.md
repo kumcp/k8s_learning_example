@@ -59,3 +59,11 @@ include_policy_ebs_csi_driver = <Boolean: show if you want to include policy for
 include = []
 
 ```
+
+After all configuration above, you can start the project with:
+
+```
+cd ./self-managed-cluster
+terraform init
+terraform apply
+```

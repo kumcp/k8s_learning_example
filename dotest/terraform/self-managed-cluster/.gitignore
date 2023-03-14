@@ -2,3 +2,6 @@
 terraform.tfstate.backup
 terraform.tfstate
 .terraform.lock.hcl
+terraform.tfvars
+id_rsa.pub
+key.pem
