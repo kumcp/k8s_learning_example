@@ -59,8 +59,10 @@ resource "digitalocean_droplet" "cp" {
   # provisioner "remote-exec" {
 
   #   inline = [
-  #     "sleep 120",
-  #     "kubeadm token create 123456.1234567890123456",
+  #     "#!/bin/bash",
+  #     "while [[ ! \"$a\" == */kubeadm* ]]; do a=$(which kubeadm); sleep 5; done ",
+  #     "while [[ -f /etc/kubernetes/admin.conf ]]; do sleep 5; done ",
+  #     "sudo kubeadm token create 123456.1234567890123456",
   #   ]
   # }
 }
@@ -84,9 +86,11 @@ resource "digitalocean_droplet" "worker" {
   # provisioner "remote-exec" {
 
   #   inline = [
-  #     "sleep 180",
+  #     "#!/bin/bash",
+  #     "while [[ ! \"$a\" == */kubeadm* ]]; do a=$(which kubeadm); sleep 5; done ",
   #     "kubeadm join ${digitalocean_droplet.cp.ipv4_address}:6443 123456.1234567890123456 --discovery-token-unsafe-skip-ca-verification",
   #   ]
+
   # }
 }
 

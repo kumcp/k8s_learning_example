@@ -57,6 +57,10 @@ kubeadm init
 echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /root/.bashrc
 source /root/.bashrc
 
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
 # If you want to copy the code and run, please use:
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
