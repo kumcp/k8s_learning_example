@@ -45,7 +45,7 @@ apt-add-repository -y "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 # Step 4: Install kubernetes components
 
 apt update
-apt install -y kubelet kubeadm kubectl
+apt install -y kubelet=1.24.0-00 kubeadm=1.24.0-00 kubectl=1.24.0-00
 apt-mark hold kubelet kubeadm kubectl
 
 
@@ -61,9 +61,9 @@ runtime-endpoint: unix:///run/containerd/containerd.sock
 image-endpoint: unix:///run/containerd/containerd.sock
 """ | tee /etc/crictl.yaml
 
-# Step 7: Join cluster
+# Step 7: Join to cluster
 # Copy join cluster command here.
 #
 # It should start with kubeadm join ...
-
+# If you wish to use a specific version, add flag: --kubernetes-version 1.24.0
 
