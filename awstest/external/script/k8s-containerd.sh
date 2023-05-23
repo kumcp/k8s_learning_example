@@ -22,9 +22,9 @@ sudo apt-get install containerd.io -y
 sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
 
-sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" >> ~/kubernetes.list
+sudo mv ~/kubernetes.list /etc/apt/sources.list.d
 
 echo "===========INSTALL KUBETLET & KUBEADM & KUBECTL ============="
 sudo apt-get update
