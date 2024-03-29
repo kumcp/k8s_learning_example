@@ -1,0 +1,4 @@
+FROM nginx:alpine
+
+
+RUN echo "Custom page 2 for nginx" > /usr/share/nginx/html/index.html

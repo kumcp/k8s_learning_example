@@ -1,0 +1,10 @@
+FROM ubuntu
+
+
+RUN apt-get update -y
+RUN apt-get install nginx -y
+RUN echo "echo \"This will run in run-time\"" >> run-time-script.sh
+EXPOSE 80
+
+
+CMD ["nginx", "-g", "daemon off;"]
