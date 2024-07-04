@@ -1,1 +1,4 @@
-do_token = "dop_v1_fcf4affdb17a0ee2e0bc77645ca4fd0672e78eee40b97d085171927f886a37c2"
+do_token = "dop_v1_d1ee339fa65b7411e2c57017e1fcfaded36aaaf7b9566380993a0b6f7abc9b61"
+
+cp_instance_version     = "ubuntu-20-04-x64"
+worker_instance_version = "ubuntu-20-04-x64"

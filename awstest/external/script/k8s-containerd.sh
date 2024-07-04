@@ -7,7 +7,7 @@ sudo apt-get install \
 
 sudo apt-get update
 
-echo "============INSTALL CONTAINERD=============="
+echo "============INSTALL DOCKER AND CONTAINERD=============="
 
 sudo apt-get install containerd -y
 

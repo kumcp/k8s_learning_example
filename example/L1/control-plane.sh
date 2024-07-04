@@ -48,22 +48,32 @@ apt update
 apt install -y kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl
 
+# Step 5: CREATE CLUSTER
+kubeadm init
 
-# Step 5: Config access cluster as root
+# Step 6: Config access cluster as root
+
+# Note: This line only work if you run the whole .sh file. 
 echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /root/.bashrc
 source /root/.bashrc
 
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+# If you want to copy the code and run, please use:
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Step 6: Config crictl for debugging:
+# Step 7: Config crictl for debugging:
 echo """
 runtime-endpoint: unix:///run/containerd/containerd.sock
 image-endpoint: unix:///run/containerd/containerd.sock
 """ | tee /etc/crictl.yaml
 
-# Step 7: Join cluster
-# Copy join cluster command here.
-#
-# It should start with kubeadm join ...
+
+# Step 8: For node which start to receive Ready, you will need to install CNI
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
 
 
+# Step 9: Get the join command
+cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1 > /root/join_command.sh

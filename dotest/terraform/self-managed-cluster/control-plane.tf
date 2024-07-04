@@ -17,16 +17,16 @@ resource "digitalocean_tag" "cluster-tag" {
 
 locals {
   region   = "sgp1"
-  cp_image = "ubuntu-22-10-x64"
-  cp_size  = "s-2vcpu-2gb"
+  cp_image = var.cp_instance_version
+  cp_size  = var.cp_instance_size
   cp_name  = "control-plane"
 
-  worker_image = "ubuntu-22-10-x64"
-  worker_size  = "s-2vcpu-2gb"
+  worker_image = var.worker_instance_version
+  worker_size  = var.worker_instance_size
   worker_name  = "worker"
 
   tags         = [digitalocean_tag.cluster-tag.name]
-  project_name = "sm-cluster"
+  project_name = "sm"
 }
 
 module "key" {
@@ -107,7 +107,7 @@ resource "digitalocean_firewall" "cluster_firewall" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
-  # Allow inbound for all droplets which has tags k8s
+  # Allow inbound for all droplets which has all tags in local.tags
   inbound_rule {
     protocol    = "tcp"
     port_range  = "1-65535"
