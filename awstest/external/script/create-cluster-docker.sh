@@ -1,7 +1,7 @@
 
 
 # Create cluster with pre-config using cri-socker=cri-dockerd
-sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5 --cri-socket=unix:///var/run/cri-dockerd.sock
+sudo kubeadm init --ignore-preflight-errors=NumCPU,Mem --v=5 --cri-socket=unix:///var/run/cri-dockerd.sock --pod-network-cidr=192.168.0.0/16
 
 mkdir -p /home/ubuntu/.kube
 sudo cp -i /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
@@ -18,17 +18,10 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Install calico CNI
 echo "============Install Calico CNI ============"
-# kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
-# curl https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml -O
-# kubectl create -f custom-resources.yaml
-# curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
-# kubectl apply -f calico.yaml
-# kubectl create -f https://projectcalico.docs.tigera.io/manifests/tigera-operator.yaml
-# kubectl create -f https://projectcalico.docs.tigera.io/manifests/custom-resources.yaml
-# kubectl apply -f https://projectcalico.docs.tigera.io/manifests/calico.yaml
-kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
-
-
+# if pod network in "kubeadm init" is not =192.168.0.0/16, then edit downloaded custom-resources.yaml file accordingly (edit cidr= entry, default is 192.168.0.0/16)
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
+kubectl create -f custom-resources.yaml 
 
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf

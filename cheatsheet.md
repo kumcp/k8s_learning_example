@@ -7,7 +7,13 @@
 
 kubectl get pod [-n <namespace>]
 kubectl describe pod <pod-name> [-n <namespace>]
+
 kubectl logs pod/<pod-name> [-n <namespace>]
+kubectl logs pod/myjob2-92qd2
+
+
+kubectl edit deploy <deployment-name>
+kubectl edit deploy my-deploy
 
 kubectl delete pod <pod-name>
 
@@ -23,6 +29,8 @@ kubectl set image deployment/nginx-deployment nginx=nginx:1.22.0
 # History rollout of deployment
 kubectl rollout history deployment/nginx-deployment
 kubectl rollout restart
+
+kubectl rollout undo deploy/vip-dpl # Revert back to previous dpl.
 
 kubectl rollout
 

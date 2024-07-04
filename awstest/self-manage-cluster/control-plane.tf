@@ -34,7 +34,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-*"]
   }
 
   filter {
@@ -55,7 +55,7 @@ module "control_plane" {
   bootstrap_script = templatefile("../external/templatescript.tftpl", {
     script_list : [
       templatefile("../external/script/awscli.sh", {}),
-      templatefile("../external/script/k8s-containerd.sh", {}),
+      templatefile("../external/script/pre-config.sh", {}),
       templatefile("../external/script/config-crictl.sh", {}),
       contains(local.include_components, "docker") ? templatefile("../external/script/docker.sh", {}) : "",
       contains(local.include_components, "cri-docker") ? templatefile("../external/script/cri-docker.sh", {}) : "",

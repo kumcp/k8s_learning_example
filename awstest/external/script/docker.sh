@@ -1,10 +1,9 @@
 
 # Install docker
 sudo apt-get update
-sudo apt-get install docker-ce-cli docker-ce -y
+sudo apt-get install docker.io -y
 # Start docker permission
 sudo chmod 666 /var/run/docker.sock
-sudo chmod 666 /run/containerd/containerd.sock
 
 # Install cri docker service/socket
 # https://www.mirantis.com/blog/how-to-install-cri-dockerd-and-migrate-nodes-from-dockershim/
