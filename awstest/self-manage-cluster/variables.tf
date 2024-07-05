@@ -18,6 +18,11 @@ variable "region" {
   description = "Specific region for your account"
 }
 
+variable "project_name" {
+  type        = string
+  description = "Specific project name for differenciating between cluster"
+}
+
 
 variable "control_plane_instance_name" {
   type        = string

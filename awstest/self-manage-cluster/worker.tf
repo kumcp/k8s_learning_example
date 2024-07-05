@@ -31,7 +31,7 @@ module "workers" {
   security_group_ids  = [module.public_ssh_http.public_sg_id, module.k8s_cluster_worker_sg.specific_sg_id, module.k8s_cluster_sg.specific_sg_id]
   keypair_name        = local.worker_keypair
   instance_type       = local.worker_instance_type
-  name                = local.worker_name
+  name                = "${local.project_name}_${local.worker_name}"
   number_of_instances = local.number_of_workers
 
   // TODO: This will need to be more specific, but keep it simple for now

@@ -12,8 +12,9 @@ locals {
   #     ipv6_cidr_blocks = ["::/0"]
   #     description      = ""
   #   }]
-  rules       = var.rules
-  name_suffix = var.name_suffix
+  project_name = var.project_name
+  rules        = var.rules
+  name_suffix  = var.name_suffix
   common_tags = merge(var.tags,
     tomap({
       Name = "allow_public"
@@ -38,7 +39,7 @@ resource "aws_security_group_rule" "public_rules" {
 
 resource "aws_security_group" "allow_public" {
 
-  name        = "${local.name_suffix}_allow_public"
+  name        = "${local.project_name}_${local.name_suffix}_allow_public"
   description = "Allow inbound traffic"
   vpc_id      = local.vpc_id
 
@@ -53,7 +54,7 @@ resource "aws_security_group" "allow_public" {
 
   tags = merge(local.common_tags,
     tomap({
-      Name = "allow_public"
+      Name = "${local.project_name}_allow_public"
   }))
 }
 
@@ -75,7 +76,7 @@ resource "aws_security_group_rule" "rules" {
 
 resource "aws_security_group" "allow_specific" {
 
-  name        = "${local.name_suffix}_allow_specific_port"
+  name        = "${local.project_name}_${local.name_suffix}_allow_specific_port"
   description = "Allow inbound traffic from a specific port"
   vpc_id      = local.vpc_id
 
@@ -89,6 +90,6 @@ resource "aws_security_group" "allow_specific" {
 
   tags = merge(local.common_tags,
     tomap({
-      Name = "allow_specific"
+      Name = "${local.project_name}_allow_specific"
   }))
 }

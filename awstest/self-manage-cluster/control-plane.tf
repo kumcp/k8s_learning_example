@@ -21,6 +21,7 @@ locals {
   control_plane_instance_name   = var.control_plane_instance_name
   include_components            = var.include
   include_ebs_csi_driver_policy = var.include_policy_ebs_csi_driver
+  project_name                  = var.project_name
 }
 // Usage of template has been deprecated.
 # data "template_file" "control_plane_user_data" {
@@ -75,18 +76,20 @@ module "control_plane" {
   security_group_ids = [module.public_ssh_http.public_sg_id, module.k8s_cluster_sg.specific_sg_id, module.k8s_cluster_worker_sg.specific_sg_id, module.k8s_public_sg.public_sg_id]
   keypair_name       = local.keypair_name
   instance_type      = local.instance_type_master
-  name               = local.control_plane_instance_name
+  name               = "${local.project_name}_${local.control_plane_instance_name}"
 }
 
 module "public_ssh_http" {
   source       = "../module/common_sg"
   name_suffix  = "control_plane_sg"
   public_ports = ["80", "22"]
+  project_name = local.project_name
 }
 
 module "k8s_public_sg" {
-  source      = "../module/common_sg"
-  name_suffix = "k8s_public"
+  source       = "../module/common_sg"
+  project_name = local.project_name
+  name_suffix  = "k8s_public"
   rules = [{
     from_port   = "30000"
     to_port     = "33000"
@@ -95,8 +98,9 @@ module "k8s_public_sg" {
 }
 
 module "k8s_cluster_sg" {
-  source      = "../module/common_sg"
-  name_suffix = "k8s_cluster"
+  source       = "../module/common_sg"
+  project_name = local.project_name
+  name_suffix  = "k8s_cluster"
   rules = [{
     port        = "6443"
     cidr_blocks = ["172.31.0.0/16"]
@@ -126,8 +130,9 @@ module "k8s_cluster_sg" {
 }
 
 module "k8s_cluster_worker_sg" {
-  source      = "../module/common_sg"
-  name_suffix = "k8s_cluster_inside"
+  source       = "../module/common_sg"
+  project_name = local.project_name
+  name_suffix  = "k8s_cluster_inside"
   rules = [{
     from_port   = "0"
     to_port     = "63000"
@@ -139,7 +144,7 @@ module "k8s_cluster_worker_sg" {
 
 resource "aws_iam_role" "control_plane_role" {
 
-  name = "role_${local.control_plane_instance_name}"
+  name = "${local.project_name}_${local.control_plane_instance_name}_role"
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
   assume_role_policy = jsonencode({
@@ -187,7 +192,7 @@ resource "aws_iam_role" "control_plane_role" {
   }
 
   tags = {
-    Name = "control-plane-role"
+    Name = "${local.project_name}_control-plane-role"
   }
 }
 
@@ -207,7 +212,7 @@ resource "aws_iam_role_policy_attachment" "EBSCSIDriver-role-policy-attach" {
 }
 
 resource "aws_ssm_parameter" "join_k8s_cluster_cmd" {
-  name  = "join_command"
+  name  = "${local.project_name}_join_command"
   type  = "String"
   value = "NULL"
 }
