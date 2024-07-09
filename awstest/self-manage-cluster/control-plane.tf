@@ -61,7 +61,11 @@ module "control_plane" {
       contains(local.include_components, "docker") ? templatefile("../external/script/docker.sh", {}) : "",
       contains(local.include_components, "cri-docker") ? templatefile("../external/script/cri-docker.sh", {}) : "",
       // Create cluster command
-      contains(local.include_components, "cri-docker") ? templatefile("../external/script/create-cluster-docker.sh", {}) : templatefile("../external/script/create-cluster.sh", {}),
+      contains(local.include_components, "cri-docker") ? templatefile("../external/script/create-cluster-docker.sh", {
+        join_command : "${local.project_name}_join_command"
+        }) : templatefile("../external/script/create-cluster.sh", {
+        join_command : "${local.project_name}_join_command"
+      }),
       contains(local.include_components, "helm") ? templatefile("../external/script/helm.sh", {}) : "",
       contains(local.include_components, "etcd") ? templatefile("../external/script/etcd-client.sh", {}) : "",
       contains(local.include_components, "ebs-csi-driver") ? templatefile("../external/script/driver/ebs-csi-driver.sh", {}) : "",

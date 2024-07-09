@@ -14,5 +14,5 @@ kubectl create -f custom-resources.yaml
 
 ##### UPLOAD JOIN COMMAND INTO SSM PARAMETER
 
-aws ssm put-parameter --name=join_command  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
+aws ssm put-parameter --name=${join_command}  --type=String --value="$(cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1)" --overwrite
 aws ssm put-parameter --name=number_of_workers  --type=String --value=0 --overwrite

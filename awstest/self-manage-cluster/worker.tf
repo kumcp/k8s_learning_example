@@ -23,7 +23,11 @@ module "workers" {
       contains(local.include_components, "docker") ? templatefile("../external/script/docker.sh", {}) : "",
       contains(local.include_components, "cri-docker") ? templatefile("../external/script/cri-docker.sh", {}) : "",
       // Join cluster command
-      contains(local.include_components, "cri-docker") ? templatefile("../external/script/join-cluster-docker.sh", {}) : templatefile("../external/script/join-cluster.sh", {}),
+      contains(local.include_components, "cri-docker") ? templatefile("../external/script/join-cluster-docker.sh", {
+        join_command : "${local.project_name}_join_command"
+        }) : templatefile("../external/script/join-cluster.sh", {
+        join_command : "${local.project_name}_join_command"
+      }),
     ]
   })
 
