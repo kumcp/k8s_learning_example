@@ -11,4 +11,4 @@ if [[ "$result" == *"kubeadm"* ]]; then
 fi
 done
 
-sudo $(aws ssm get-parameter --name ${join_command}--output text --query "Parameter.Value" | sed -e "s/\\\\//g")
+sudo $(aws ssm get-parameter --name ${join_command} --output text --query "Parameter.Value" | sed -e "s/\\\\//g")
