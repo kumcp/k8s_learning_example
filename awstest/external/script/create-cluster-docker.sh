@@ -19,9 +19,10 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 # Install calico CNI
 echo "============Install Calico CNI ============"
 # if pod network in "kubeadm init" is not =192.168.0.0/16, then edit downloaded custom-resources.yaml file accordingly (edit cidr= entry, default is 192.168.0.0/16)
-kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
-curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
-kubectl create -f custom-resources.yaml 
+# kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+# curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml -O
+# kubectl create -f custom-resources.yaml 
+kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
 
 # Run as root
 #  export KUBECONFIG=/etc/kubernetes/admin.conf
