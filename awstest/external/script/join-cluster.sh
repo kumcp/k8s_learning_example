@@ -3,7 +3,7 @@
 while true
 do
 sleep 2s
-result=$(aws ssm get-parameter --name join_command --output text --query "Parameter.Value")
+result=$(aws ssm get-parameter --name ${join_command} --output text --query "Parameter.Value")
 echo $result
 if [[ "$result" == *"kubeadm"* ]]; then
   echo "breaked"
@@ -11,4 +11,4 @@ if [[ "$result" == *"kubeadm"* ]]; then
 fi
 done
 
-sudo $(aws ssm get-parameter --name join_command --output text --query "Parameter.Value" | sed -e "s/\\\\//g")
+sudo $(aws ssm get-parameter --name ${join_command} --output text --query "Parameter.Value" | sed -e "s/\\\\//g")

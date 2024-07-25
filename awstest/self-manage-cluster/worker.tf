@@ -23,7 +23,11 @@ module "workers" {
       contains(local.include_components, "docker") ? templatefile("../external/script/docker.sh", {}) : "",
       contains(local.include_components, "cri-docker") ? templatefile("../external/script/cri-docker.sh", {}) : "",
       // Join cluster command
-      contains(local.include_components, "cri-docker") ? templatefile("../external/script/join-cluster-docker.sh", {}) : templatefile("../external/script/join-cluster.sh", {}),
+      contains(local.include_components, "cri-docker") ? templatefile("../external/script/join-cluster-docker.sh", {
+        join_command : "${local.project_name}_join_command"
+        }) : templatefile("../external/script/join-cluster.sh", {
+        join_command : "${local.project_name}_join_command"
+      }),
     ]
   })
 
@@ -31,7 +35,7 @@ module "workers" {
   security_group_ids  = [module.public_ssh_http.public_sg_id, module.k8s_cluster_worker_sg.specific_sg_id, module.k8s_cluster_sg.specific_sg_id]
   keypair_name        = local.worker_keypair
   instance_type       = local.worker_instance_type
-  name                = local.worker_name
+  name                = "${local.project_name}_${local.worker_name}"
   number_of_instances = local.number_of_workers
 
   // TODO: This will need to be more specific, but keep it simple for now

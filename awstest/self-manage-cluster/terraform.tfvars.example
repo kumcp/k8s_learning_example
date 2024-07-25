@@ -1,6 +1,7 @@
 keypair_name                =
 instance_type_master        = 
 instance_type               = 
+project_name                =
 control_plane_instance_name = 
 region                      = "us-east-1"
 number_of_workers           = 

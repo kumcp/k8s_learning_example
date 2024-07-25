@@ -27,6 +27,11 @@ variable "name_suffix" {
   default = "demo"
 }
 
+variable "project_name" {
+  type    = string
+  default = ""
+}
+
 variable "tags" {
   type    = map(any)
   default = {}
