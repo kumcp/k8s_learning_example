@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: taa-cfm
+  namespace: taa
+data:
+  db_host: "taa-db-service.taa"
+  db_user: "admin"
+  db_password: "123@#$abc"
+  db_name: "taa-db"

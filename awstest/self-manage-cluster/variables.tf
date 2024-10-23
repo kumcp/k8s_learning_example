@@ -21,6 +21,7 @@ variable "region" {
 variable "project_name" {
   type        = string
   description = "Specific project name for differenciating between cluster"
+  default     = "k8sdemo"
 }
 
 

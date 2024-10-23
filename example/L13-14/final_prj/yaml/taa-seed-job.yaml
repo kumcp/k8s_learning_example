@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: taa-seed-job
+  namespace: taa
+spec:
+  parallelism: 1
+  completions: 1
+  template:
+    spec:
+      containers:
+      - name: k8s-php-fpm
+        image: kumcp1/k8s-php-fpm
+        command: ["php",  "artisan", "db:seed"]
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DB_HOST
+          value: db-svc.taa
+        - name: DB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_name
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_pass
+      restartPolicy: Never
+  backoffLimit: 4

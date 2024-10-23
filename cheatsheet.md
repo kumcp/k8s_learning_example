@@ -17,7 +17,7 @@ kubectl edit deploy my-deploy
 
 kubectl delete pod <pod-name>
 
-
+kubectl exec -it 
 
 # List command fo deployment
 kubectl get deploy [-n <namespace>]

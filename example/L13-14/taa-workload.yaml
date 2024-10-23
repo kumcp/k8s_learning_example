@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taa-dep
+  labels:
+    app: taa
+  namespace: taa
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: taa
+  template:
+    metadata:
+      labels:
+        app: taa
+    spec:
+      containers:
+      - name: nginx
+        image: kumcp1/test-repo-nginx:latest
+        resources:
+        ports:
+        - containerPort: 80
+      - name: taa-app
+        image: kumcp1/test-repo:latest
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_host
+        - name: DB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_name
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_password
+
