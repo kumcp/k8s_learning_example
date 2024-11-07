@@ -19,34 +19,45 @@ sysctl --system
 
 # Step 3: Install containerd
 
-apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
-add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-apt update
-apt install -y containerd.io
-
-# Config containerd
-containerd config default | tee /etc/containerd/config.toml >/dev/null 2>&1
-sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
-
-systemctl restart containerd
-systemctl enable containerd
+sudo apt-get install containerd -y
 
 
-# Step 3: Add kubernetes repo
 
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-apt-add-repository -y "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+# Step 4: Add kubernetes repo
+
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+
+sudo mkdir /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
 
 # jammy is work only for ubuntu 22
 
-# Step 4: Install kubernetes components
+# Install kubernetes components
 
-apt update
-apt install -y kubelet kubeadm kubectl
-apt-mark hold kubelet kubeadm kubectl
+
+
+# This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+sudo systemctl enable --now kubelet
+
+
+# Config containerd
+
+# Config containerd
+sudo mkdir /etc/containerd
+sudo containerd config default > /etc/containerd/config.toml
+sudo sed -i 's/            SystemdCgroup = false/            SystemdCgroup = true/' /etc/containerd/config.toml
+sudo systemctl restart containerd
+sudo systemctl restart kubelet
 
 
 # Step 5: Config access cluster as root

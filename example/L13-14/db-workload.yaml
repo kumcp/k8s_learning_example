@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taa-db-dep
+  labels:
+    app: taa-db
+  namespace: taa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taa-db
+  template:
+    metadata:
+      labels:
+        app: taa-db
+    spec:
+      volumes:
+      - name: db-vol
+        persistentVolumeClaim:
+          claimName: db-pvc
+      containers:
+      - name: mysql
+        image: mysql:latest
+        resources:
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_name
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: taa-cfm
+              key: db_password
+        volumeMounts:
+          - mountPath: "/var/lib/mysql"
+            name: db-vol

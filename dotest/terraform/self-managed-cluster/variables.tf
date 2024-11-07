@@ -16,6 +16,12 @@ variable "cp_instance_size" {
   description = "Instance size for control plane. Can be `s-2vcpu-2gb`"
 }
 
+variable "region" {
+  type        = string
+  default     = "sgp1"
+  description = "Input Region for self managed cluster to run"
+}
+
 variable "worker_instance_version" {
   type        = string
   default     = "ubuntu-22-10-x64"

@@ -16,7 +16,7 @@ resource "digitalocean_tag" "cluster-tag" {
 }
 
 locals {
-  region   = "sgp1"
+  region   = var.region
   cp_image = var.cp_instance_version
   cp_size  = var.cp_instance_size
   cp_name  = "control-plane"
@@ -104,6 +104,12 @@ resource "digitalocean_firewall" "cluster_firewall" {
   inbound_rule {
     protocol         = "tcp"
     port_range       = "22"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "30000-34000"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 

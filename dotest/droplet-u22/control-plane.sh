@@ -19,37 +19,49 @@ sysctl --system
 
 # Step 3: Install containerd
 
-apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
-add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-apt update
-apt install -y containerd.io
-
-# Config containerd
-containerd config default | tee /etc/containerd/config.toml >/dev/null 2>&1
-sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
-
-systemctl restart containerd
-systemctl enable containerd
+sudo apt-get install containerd -y
 
 
-# Step 3: Add kubernetes repo
 
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-apt-add-repository -y "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+# Step 4: Add kubernetes repo
+
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl
+
+
+sudo mkdir /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
 
 # jammy is work only for ubuntu 22
 
-# Step 4: Install kubernetes components
+# Install kubernetes components
 
-apt update
-apt install -y kubelet kubeadm kubectl
-apt-mark hold kubelet kubeadm kubectl
+
+
+# This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+
+sudo systemctl enable --now kubelet
+
+
+# Config containerd
+
+# Config containerd
+sudo mkdir /etc/containerd
+sudo containerd config default > /etc/containerd/config.toml
+sudo sed -i 's/            SystemdCgroup = false/            SystemdCgroup = true/' /etc/containerd/config.toml
+sudo systemctl restart containerd
+sudo systemctl restart kubelet
 
 # Step 5: CREATE CLUSTER
-kubeadm init
+# Flannel CNI using 10.244.0.0/16 by default. If you want to change this, modify the config in Step 8
+kubeadm init --v=5 --pod-network-cidr=10.244.0.0/16
 
 # Step 6: Config access cluster as root
 
@@ -57,12 +69,14 @@ kubeadm init
 echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /root/.bashrc
 source /root/.bashrc
 
+
+
+# If you want to copy the code and run, please use:
+export HOME="/root"
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-# If you want to copy the code and run, please use:
-export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # Step 7: Config crictl for debugging:
 echo """
@@ -72,8 +86,10 @@ image-endpoint: unix:///run/containerd/containerd.sock
 
 
 # Step 8: For node which start to receive Ready, you will need to install CNI
-kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
-
-
+# Note tha Calico does not work on Digital Ocean, so use Flannel instead
+kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/refs/heads/master/Documentation/kube-flannel.yml
 # Step 9: Get the join command
 cat /var/log/cloud-init-output.log | grep 'kubeadm join' -A1 > /root/join_command.sh
+
+
+
