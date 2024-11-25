@@ -45,6 +45,7 @@ resource "tls_private_key" "pk_win" {
 }
 
 resource "local_file" "key_file" {
+  count           = local.is_linux ? 0 : 1
   content     = tls_private_key.pk_win[0].private_key_pem
   filename    = "key2.pem"
 

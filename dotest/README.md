@@ -55,5 +55,9 @@ export DIGITALOCEAN_ACCESS_TOKEN=<your-token-here>
 
 ```sh
 terraform init
-terraform apply
+terraform apply --auto-approve
 ```
+
+After running terraform apply, Terraform script will also generate tls script inside the running folder. Use `key.pem` for access all droplets created by this script and `id_rsa.pub` for other action require public key.
+
+
