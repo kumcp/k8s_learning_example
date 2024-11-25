@@ -30,7 +30,7 @@ sudo apt-get update
 sudo apt-get install -y apt-transport-https ca-certificates curl
 
 
-sudo mkdir /etc/apt/keyrings
+sudo mkdir -p /etc/apt/keyrings 
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
 
