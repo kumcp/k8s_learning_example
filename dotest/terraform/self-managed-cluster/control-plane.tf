@@ -32,8 +32,8 @@ locals {
 module "key" {
   source = "../../../terraform/module/ssh-key"
 
-  private_key_path = "./key.pem"
-  public_key_path  = "./id_rsa.pub"
+  private_key_path = "key.pem"
+  public_key_path  = "id_rsa.pub"
 }
 
 resource "digitalocean_ssh_key" "ssh_key" {

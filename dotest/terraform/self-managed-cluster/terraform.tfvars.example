@@ -1,1 +1,9 @@
-c
+do_token = ""
+
+cp_instance_version     = "ubuntu-22-04-x64"
+worker_instance_version = "ubuntu-22-04-x64"
+
+cp_instance_size = "s-2vcpu-2gb"
+worker_instance_size = "s-2vcpu-2gb"
+
+region = "sgp1"
