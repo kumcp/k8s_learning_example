@@ -54,14 +54,26 @@ resource "aws_instance" "this" {
     device_index         = 0
   }
 
+  dynamic "root_block_device" {
+    for_each = var.root_block_override ? [1] : []
+    content {
+      delete_on_termination = var.root_block_delete_on_termination
+      encrypted             = true
+      iops                  = var.root_block_volume_type == "gp2" ? null : var.root_block_iops
+      kms_key_id            = var.root_block_kms_key_id
+      throughput            = var.root_block_throughput
+      volume_size           = var.root_block_volume_size
+      volume_type           = var.root_block_volume_type
+   }
+  }
+
+
   user_data = local.bootstrap_script
   tags      = merge(local.common_tags,
     tomap({
       Name = local.number_of_instances == 1 ? "${local.common_tags.Name}" : "${local.common_tags.Name}_${count.index}"
   }))
 }
-
-
 
 
 
