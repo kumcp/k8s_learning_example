@@ -53,6 +53,9 @@ module "control_plane" {
   // Usage of template has been deprecated.
   # bootstrap_script = data.template_file.control_plane_user_data.rendered
 
+  root_block_override = true
+  root_block_volume_size = 15
+
   bootstrap_script = templatefile("../external/templatescript.tftpl", {
     script_list : [
       templatefile("../external/script/awscli.sh", {}),
@@ -220,3 +223,5 @@ resource "aws_ssm_parameter" "join_k8s_cluster_cmd" {
   type  = "String"
   value = "NULL"
 }
+
+

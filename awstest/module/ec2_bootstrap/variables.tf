@@ -58,3 +58,46 @@ variable "role" {
   description = "Role name to be added into multiple ec2 instances"
   default = null
 }
+
+
+variable "root_block_delete_on_termination" {
+  description = "Determines whether the root block device should be deleted on termination"
+  type        = bool
+  default     = true
+}
+
+variable "root_block_volume_type" {
+  description = "The type of the root block volume (e.g., gp2, gp3, io1, io2)"
+  type        = string
+  default     = "gp3"
+}
+
+variable "root_block_iops" {
+  description = "The number of IOPS for the root block volume (required for io1, io2, and optionally for gp3)"
+  type        = number
+  default     = null
+}
+
+variable "root_block_kms_key_id" {
+  description = "The KMS key ID used to encrypt the root block volume"
+  type        = string
+  default     = null
+}
+
+variable "root_block_throughput" {
+  description = "The throughput in MiB/s for gp3 volumes"
+  type        = number
+  default     = null
+}
+
+variable "root_block_volume_size" {
+  description = "The size of the root block volume in GiB"
+  type        = number
+  default     = 8
+}
+
+variable "root_block_override" {
+  description = "If set to true, the root block device will be overriden with the specified values"
+  type        = bool
+  default     = false
+}
